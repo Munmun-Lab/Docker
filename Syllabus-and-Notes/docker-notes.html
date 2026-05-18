@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Docker — Complete Learning Notes</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e17;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: #1e3a5f;
+    --accent: #2496ed;
+    --accent2: #00d4ff;
+    --green: #00e676;
+    --orange: #ff9800;
+    --red: #ff5252;
+    --purple: #b388ff;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --whale: #2496ed;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #0a0e17 0%, #0d1b2e 50%, #0a1628 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 60px 40px 50px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(36,150,237,0.12) 0%, transparent 70%);
+  }
+  .whale-icon {
+    font-size: 64px;
+    display: block;
+    animation: float 3s ease-in-out infinite;
+    position: relative; z-index: 1;
+  }
+  @keyframes float {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  .hero h1 {
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    font-weight: 800;
+    background: linear-gradient(90deg, var(--accent2), var(--accent), var(--purple));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    position: relative; z-index: 1;
+    margin: 12px 0 8px;
+  }
+  .hero p {
+    color: var(--muted);
+    font-size: 1.1rem;
+    position: relative; z-index: 1;
+  }
+
+  /* NAV */
+  .nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,14,23,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+    display: flex; gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    padding: 14px 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    cursor: pointer;
+    background: none; border: none;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+  }
+  .nav-btn:hover, .nav-btn.active {
+    color: var(--accent2);
+    border-bottom-color: var(--accent2);
+  }
+
+  /* CONTENT */
+  .content { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  .section { display: none; animation: fadeIn 0.3s ease; }
+  .section.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  h2 {
+    font-size: 1.8rem; font-weight: 800;
+    color: var(--accent2);
+    margin-bottom: 24px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  h3 {
+    font-size: 1.15rem; font-weight: 700;
+    color: var(--text);
+    margin: 28px 0 10px;
+  }
+  p { color: #94a3b8; margin-bottom: 12px; }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px; margin-bottom: 24px;
+  }
+  .card-sm {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .card-sm .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+  .card-sm h4 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+  .card-sm p { font-size: 0.88rem; margin: 0; }
+
+  /* CODE */
+  .code-block {
+    background: #060a12;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 1.8;
+    overflow-x: auto;
+    margin: 12px 0 20px;
+    position: relative;
+  }
+  .code-block .comment { color: #4a5568; }
+  .code-block .cmd { color: var(--accent2); }
+  .code-block .flag { color: var(--orange); }
+  .code-block .val { color: var(--green); }
+  .code-block .kw { color: var(--purple); }
+  .code-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  /* DIAGRAM */
+  .diagram {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    margin: 20px 0;
+    overflow-x: auto;
+  }
+  .diagram-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  /* ARCH DIAGRAM */
+  .arch {
+    display: flex; flex-direction: column; align-items: center; gap: 0;
+  }
+  .arch-row {
+    display: flex; gap: 12px; justify-content: center; width: 100%;
+    flex-wrap: wrap;
+  }
+  .arch-box {
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .arch-arrow {
+    text-align: center;
+    font-size: 1.4rem;
+    color: var(--muted);
+    margin: 4px 0;
+    line-height: 1;
+  }
+  .box-blue { background: rgba(36,150,237,0.15); border: 1px solid var(--accent); color: var(--accent2); }
+  .box-green { background: rgba(0,230,118,0.1); border: 1px solid var(--green); color: var(--green); }
+  .box-orange { background: rgba(255,152,0,0.1); border: 1px solid var(--orange); color: var(--orange); }
+  .box-purple { background: rgba(179,136,255,0.1); border: 1px solid var(--purple); color: var(--purple); }
+  .box-red { background: rgba(255,82,82,0.1); border: 1px solid var(--red); color: var(--red); }
+  .box-gray { background: var(--surface2); border: 1px solid #2d3748; color: var(--muted); }
+
+  /* FLOW */
+  .flow { display: flex; flex-direction: column; gap: 0; align-items: flex-start; }
+  .flow-step {
+    display: flex; align-items: flex-start; gap: 16px;
+    padding: 14px 0;
+    border-left: 2px solid var(--border);
+    margin-left: 14px;
+    padding-left: 20px;
+    position: relative;
+  }
+  .flow-step::before {
+    content: '';
+    position: absolute;
+    left: -7px; top: 20px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid var(--bg);
+  }
+  .flow-step:last-child { border-left-color: transparent; }
+  .flow-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    font-weight: 700;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+  .flow-content h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 3px; }
+  .flow-content p { font-size: 0.85rem; margin: 0; }
+
+  /* COMPARISON */
+  .compare {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 16px; margin: 16px 0;
+  }
+  @media (max-width: 600px) { .compare { grid-template-columns: 1fr; } }
+  .compare-col { border-radius: 10px; padding: 20px; }
+  .col-vm { background: rgba(255,82,82,0.07); border: 1px solid rgba(255,82,82,0.3); }
+  .col-docker { background: rgba(36,150,237,0.07); border: 1px solid rgba(36,150,237,0.3); }
+  .compare-col h4 { font-size: 1rem; font-weight: 700; margin-bottom: 12px; }
+  .col-vm h4 { color: var(--red); }
+  .col-docker h4 { color: var(--accent2); }
+  .compare-col ul { list-style: none; }
+  .compare-col li { font-size: 0.88rem; color: #94a3b8; padding: 4px 0; padding-left: 16px; position: relative; }
+  .compare-col li::before { content: '→'; position: absolute; left: 0; color: var(--muted); }
+
+  /* TABLE */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.85rem; }
+  th {
+    background: var(--surface2);
+    color: var(--accent2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 10px 14px;
+    text-align: left;
+    border: 1px solid var(--border);
+  }
+  td { padding: 10px 14px; border: 1px solid var(--border); color: #94a3b8; vertical-align: top; }
+  tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+  td code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--green);
+    background: rgba(0,230,118,0.08);
+    padding: 2px 6px; border-radius: 4px;
+  }
+
+  /* BADGE */
+  .badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+  .badge-blue { background: rgba(36,150,237,0.2); color: var(--accent2); border: 1px solid rgba(36,150,237,0.4); }
+  .badge-green { background: rgba(0,230,118,0.15); color: var(--green); border: 1px solid rgba(0,230,118,0.3); }
+  .badge-orange { background: rgba(255,152,0,0.15); color: var(--orange); border: 1px solid rgba(255,152,0,0.3); }
+
+  /* TIPS */
+  .tip {
+    border-left: 3px solid var(--accent);
+    padding: 12px 16px;
+    background: rgba(36,150,237,0.06);
+    border-radius: 0 8px 8px 0;
+    margin: 12px 0;
+    font-size: 0.88rem;
+    color: #94a3b8;
+  }
+  .tip strong { color: var(--accent2); }
+
+  /* LAYER VIZ */
+  .layers {
+    display: flex; flex-direction: column-reverse; gap: 6px;
+    max-width: 400px; margin: 0 auto;
+  }
+  .layer {
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: transform 0.2s;
+    cursor: default;
+  }
+  .layer:hover { transform: translateX(6px); }
+  .layer-label { font-weight: 600; }
+  .layer-desc { color: rgba(255,255,255,0.5); font-size: 0.7rem; }
+
+  /* SVG DIAGRAM */
+  .svg-wrap { text-align: center; margin: 16px 0; overflow-x: auto; }
+  svg text { font-family: 'JetBrains Mono', monospace; }
+
+  /* INTEGRATION GRID */
+  .int-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px; margin: 16px 0;
+  }
+  .int-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+    transition: border-color 0.2s, transform 0.2s;
+    cursor: default;
+  }
+  .int-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .int-card .icon { font-size: 2rem; margin-bottom: 8px; display: block; }
+  .int-card h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 4px; }
+  .int-card p { font-size: 0.78rem; margin: 0; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <span class="whale-icon">🐳</span>
+  <h1>Docker — Complete Notes</h1>
+  <p>Everything you need to understand Docker, simply explained</p>
+</div>
+
+<nav class="nav" id="nav">
+  <button class="nav-btn active" onclick="show('intro',this)">① Intro</button>
+  <button class="nav-btn" onclick="show('concepts',this)">② Concepts</button>
+  <button class="nav-btn" onclick="show('architecture',this)">③ Architecture</button>
+  <button class="nav-btn" onclick="show('dockerfile',this)">④ Dockerfile</button>
+  <button class="nav-btn" onclick="show('commands',this)">⑤ Commands</button>
+  <button class="nav-btn" onclick="show('networking',this)">⑥ Networking</button>
+  <button class="nav-btn" onclick="show('volumes',this)">⑦ Volumes</button>
+  <button class="nav-btn" onclick="show('compose',this)">⑧ Compose</button>
+  <button class="nav-btn" onclick="show('integration',this)">⑨ Integration</button>
+  <button class="nav-btn" onclick="show('cheatsheet',this)">⑩ Cheat Sheet</button>
+</nav>
+
+<div class="content">
+
+<!-- ① INTRO -->
+<div class="section active" id="intro">
+  <h2>① What is Docker?</h2>
+
+  <div class="card">
+    <h3>The Simple Analogy 🚢</h3>
+    <p>Think of Docker like a <strong style="color:var(--accent2)">shipping container</strong>. Before containers, ships had to deal with thousands of different box sizes. Docker does the same for software — it <em>packages your app + everything it needs</em> into one standard container that runs anywhere.</p>
+    <p style="color:var(--green)">✓ Works on your laptop → works on server → works in cloud. No more "it works on my machine!"</p>
+  </div>
+
+  <h3>The Problem Docker Solves</h3>
+  <div class="compare">
+    <div class="compare-col col-vm">
+      <h4>😩 Before Docker</h4>
+      <ul>
+        <li>App works on dev, breaks on server</li>
+        <li>Different OS versions cause bugs</li>
+        <li>Setup takes hours per environment</li>
+        <li>Dependency conflicts everywhere</li>
+        <li>VMs are heavy (GBs of disk, slow start)</li>
+      </ul>
+    </div>
+    <div class="compare-col col-docker">
+      <h4>😊 With Docker</h4>
+      <ul>
+        <li>Same container runs everywhere</li>
+        <li>Isolated environment per app</li>
+        <li>Setup in seconds (docker run)</li>
+        <li>No dependency conflicts</li>
+        <li>Containers are light (MBs, instant start)</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>VM vs Docker — Visual</h3>
+  <div class="diagram">
+    <div class="diagram-title">How they differ under the hood</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+      <div>
+        <div style="text-align:center;margin-bottom:10px;color:var(--red);font-size:0.85rem;font-weight:700;">Virtual Machine</div>
+        <div style="display:flex;flex-direction:column;gap:6px;align-items:center;">
+          <div class="arch-box box-gray" style="width:100%">App A</div>
+          <div class="arch-box box-gray" style="width:100%">App B</div>
+          <div class="arch-box box-red" style="width:100%">Guest OS (full copy!)</div>
+          <div class="arch-box box-red" style="width:100%">Guest OS (full copy!)</div>
+          <div class="arch-box" style="width:100%;background:rgba(255,152,0,0.1);border:1px solid var(--orange);color:var(--orange)">Hypervisor</div>
+          <div class="arch-box box-gray" style="width:100%">Host OS</div>
+          <div class="arch-box" style="width:100%;background:#1a2235;border:1px solid #2d3748;color:#64748b">Physical Hardware</div>
+        </div>
+      </div>
+      <div>
+        <div style="text-align:center;margin-bottom:10px;color:var(--accent2);font-size:0.85rem;font-weight:700;">Docker Container</div>
+        <div style="display:flex;flex-direction:column;gap:6px;align-items:center;">
+          <div class="arch-box box-blue" style="width:100%">App A</div>
+          <div class="arch-box box-blue" style="width:100%">App B</div>
+          <div class="arch-box box-green" style="width:100%">Docker Engine</div>
+          <div class="arch-box box-gray" style="width:100%">Host OS (shared!)</div>
+          <div class="arch-box" style="width:100%;background:#1a2235;border:1px solid #2d3748;color:#64748b">Physical Hardware</div>
+        </div>
+      </div>
+    </div>
+    <p class="tip" style="margin-top:16px"><strong>Key insight:</strong> Containers share the host OS kernel — no full OS copy needed. That's why they're fast and lightweight.</p>
+  </div>
+</div>
+
+<!-- ② CONCEPTS -->
+<div class="section" id="concepts">
+  <h2>② Core Concepts</h2>
+
+  <div class="card-grid">
+    <div class="card-sm">
+      <div class="label">01 — Image</div>
+      <h4>🖼️ Docker Image</h4>
+      <p>A read-only blueprint/template. Like a recipe. It defines what the container will contain. Built from a Dockerfile.</p>
+    </div>
+    <div class="card-sm">
+      <div class="label">02 — Container</div>
+      <h4>📦 Container</h4>
+      <p>A running instance of an image. Like a pizza made from the recipe. You can run many containers from one image.</p>
+    </div>
+    <div class="card-sm">
+      <div class="label">03 — Dockerfile</div>
+      <h4>📄 Dockerfile</h4>
+      <p>A text file with step-by-step instructions to build an image. Think of it as the recipe itself.</p>
+    </div>
+    <div class="card-sm">
+      <div class="label">04 — Registry</div>
+      <h4>🏪 Docker Hub</h4>
+      <p>An online store for Docker images. Pull pre-built images (nginx, postgres, node) or push your own.</p>
+    </div>
+    <div class="card-sm">
+      <div class="label">05 — Volume</div>
+      <h4>💾 Volume</h4>
+      <p>Persistent storage for containers. Data in containers is lost on stop — volumes save it outside the container.</p>
+    </div>
+    <div class="card-sm">
+      <div class="label">06 — Network</div>
+      <h4>🔗 Network</h4>
+      <p>Lets containers talk to each other or the outside world. Docker creates isolated networks per project.</p>
+    </div>
+  </div>
+
+  <h3>Image → Container Flow</h3>
+  <div class="diagram">
+    <div class="diagram-title">From Dockerfile to Running App</div>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-num">STEP 1</div>
+        <div class="flow-content">
+          <h4>📄 Write Dockerfile</h4>
+          <p>Instructions: base image, copy files, install deps, run command</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">STEP 2</div>
+        <div class="flow-content">
+          <h4>🔨 docker build</h4>
+          <p>Docker reads Dockerfile and creates a layered image</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">STEP 3</div>
+        <div class="flow-content">
+          <h4>🏪 docker push (optional)</h4>
+          <p>Share your image to Docker Hub or a private registry</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">STEP 4</div>
+        <div class="flow-content">
+          <h4>▶️ docker run</h4>
+          <p>Docker creates a container from the image and starts it</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">STEP 5</div>
+        <div class="flow-content">
+          <h4>✅ App is Running!</h4>
+          <p>Your app is live inside an isolated container</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Image Layers (How Images Work)</h3>
+  <div class="diagram">
+    <div class="diagram-title">Each Dockerfile instruction = one layer (cached!)</div>
+    <div class="layers">
+      <div class="layer" style="background:rgba(36,150,237,0.1);border:1px solid rgba(36,150,237,0.3);">
+        <span class="layer-label" style="color:var(--accent2)">FROM ubuntu:22.04</span>
+        <span class="layer-desc">Base Layer</span>
+      </div>
+      <div class="layer" style="background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.25);">
+        <span class="layer-label" style="color:var(--green)">RUN apt-get install python3</span>
+        <span class="layer-desc">+45MB</span>
+      </div>
+      <div class="layer" style="background:rgba(179,136,255,0.08);border:1px solid rgba(179,136,255,0.25);">
+        <span class="layer-label" style="color:var(--purple)">COPY requirements.txt .</span>
+        <span class="layer-desc">+2KB</span>
+      </div>
+      <div class="layer" style="background:rgba(255,152,0,0.08);border:1px solid rgba(255,152,0,0.25);">
+        <span class="layer-label" style="color:var(--orange)">RUN pip install -r requirements.txt</span>
+        <span class="layer-desc">+12MB</span>
+      </div>
+      <div class="layer" style="background:rgba(255,82,82,0.08);border:1px solid rgba(255,82,82,0.25);">
+        <span class="layer-label" style="color:var(--red)">COPY . /app</span>
+        <span class="layer-desc">Your Code</span>
+      </div>
+      <div class="layer" style="background:rgba(36,150,237,0.2);border:2px solid var(--accent);">
+        <span class="layer-label" style="color:var(--accent2)">CMD ["python","app.py"]</span>
+        <span class="layer-desc">🔼 Writable Layer (Container)</span>
+      </div>
+    </div>
+    <p class="tip" style="margin-top:16px"><strong>Caching magic:</strong> If a layer hasn't changed, Docker reuses the cached version. Put rarely-changing layers first!</p>
+  </div>
+</div>
+
+<!-- ③ ARCHITECTURE -->
+<div class="section" id="architecture">
+  <h2>③ Docker Architecture</h2>
+
+  <div class="card">
+    <p>Docker uses a <strong style="color:var(--accent2)">client-server</strong> architecture. The Docker client (your CLI) talks to the Docker daemon (the server that does the work).</p>
+  </div>
+
+  <div class="diagram">
+    <div class="diagram-title">Docker Architecture Overview</div>
+    <div class="arch">
+      <!-- Client -->
+      <div class="arch-row">
+        <div class="arch-box box-purple" style="padding:14px 30px">
+          👤 You (Terminal)
+        </div>
+      </div>
+      <div class="arch-arrow">↕ REST API</div>
+      <!-- Docker Client -->
+      <div class="arch-row">
+        <div class="arch-box box-blue" style="padding:12px 40px">
+          🖥️ Docker Client (docker CLI)
+        </div>
+      </div>
+      <div class="arch-arrow">↕ Unix Socket / TCP</div>
+      <!-- Docker Daemon -->
+      <div class="arch-row">
+        <div class="arch-box box-green" style="padding:14px 50px">
+          ⚙️ Docker Daemon (dockerd)
+        </div>
+      </div>
+      <div class="arch-arrow">manages</div>
+      <!-- Three components -->
+      <div class="arch-row">
+        <div class="arch-box box-orange">📦 Containers</div>
+        <div class="arch-box box-blue">🖼️ Images</div>
+        <div class="arch-box box-purple">🔗 Networks</div>
+        <div class="arch-box box-red">💾 Volumes</div>
+      </div>
+      <div class="arch-arrow">pulls from / pushes to</div>
+      <!-- Registry -->
+      <div class="arch-row">
+        <div class="arch-box" style="background:rgba(255,152,0,0.15);border:1px solid var(--orange);color:var(--orange);padding:12px 40px">
+          🏪 Docker Registry (Docker Hub / Private)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Key Components Explained</h3>
+  <table>
+    <tr><th>Component</th><th>What it does</th><th>Analogy</th></tr>
+    <tr><td><span style="color:var(--purple)">Docker Client</span></td><td>Where you type commands (docker run, docker build etc.)</td><td>TV Remote</td></tr>
+    <tr><td><span style="color:var(--green)">Docker Daemon</span></td><td>Background service that actually builds, runs, manages containers</td><td>TV itself</td></tr>
+    <tr><td><span style="color:var(--accent2)">Docker Images</span></td><td>Read-only templates stored locally or in registry</td><td>App installer file</td></tr>
+    <tr><td><span style="color:var(--orange)">Containers</span></td><td>Running processes created from images</td><td>Installed & running app</td></tr>
+    <tr><td><span style="color:var(--red)">Docker Registry</span></td><td>Remote storage for images (Docker Hub is the public one)</td><td>App Store / GitHub</td></tr>
+  </table>
+
+  <h3>Container Lifecycle</h3>
+  <div class="diagram">
+    <div class="diagram-title">Container States & Transitions</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;">
+      <div class="arch-box box-gray">Created</div>
+      <div style="color:var(--muted)">→ <code style="font-size:0.7rem;color:var(--green)">start</code> →</div>
+      <div class="arch-box box-green">Running</div>
+      <div style="color:var(--muted)">→ <code style="font-size:0.7rem;color:var(--orange)">pause</code> →</div>
+      <div class="arch-box box-orange">Paused</div>
+      <br style="width:100%">
+      <div class="arch-box box-green" style="margin-top:8px">Running</div>
+      <div style="color:var(--muted)">→ <code style="font-size:0.7rem;color:var(--red)">stop/kill</code> →</div>
+      <div class="arch-box box-red">Stopped</div>
+      <div style="color:var(--muted)">→ <code style="font-size:0.7rem;color:var(--red)">rm</code> →</div>
+      <div class="arch-box box-gray">Removed</div>
+    </div>
+  </div>
+</div>
+
+<!-- ④ DOCKERFILE -->
+<div class="section" id="dockerfile">
+  <h2>④ Writing a Dockerfile</h2>
+
+  <h3>All Instructions Explained</h3>
+  <table>
+    <tr><th>Instruction</th><th>What it does</th><th>Example</th></tr>
+    <tr><td><code>FROM</code></td><td>Set the base image (always first!)</td><td><code>FROM node:18-alpine</code></td></tr>
+    <tr><td><code>WORKDIR</code></td><td>Set working directory inside container</td><td><code>WORKDIR /app</code></td></tr>
+    <tr><td><code>COPY</code></td><td>Copy files from host to container</td><td><code>COPY . /app</code></td></tr>
+    <tr><td><code>ADD</code></td><td>Like COPY but also handles URLs & tar files</td><td><code>ADD app.tar.gz /app</code></td></tr>
+    <tr><td><code>RUN</code></td><td>Execute command during build</td><td><code>RUN npm install</code></td></tr>
+    <tr><td><code>CMD</code></td><td>Default command when container starts (can be overridden)</td><td><code>CMD ["node","server.js"]</code></td></tr>
+    <tr><td><code>ENTRYPOINT</code></td><td>Fixed command (CMD args are appended to it)</td><td><code>ENTRYPOINT ["python"]</code></td></tr>
+    <tr><td><code>EXPOSE</code></td><td>Document which port the app uses (doesn't actually open it)</td><td><code>EXPOSE 3000</code></td></tr>
+    <tr><td><code>ENV</code></td><td>Set environment variables</td><td><code>ENV NODE_ENV=production</code></td></tr>
+    <tr><td><code>ARG</code></td><td>Build-time variable (only during build)</td><td><code>ARG VERSION=1.0</code></td></tr>
+    <tr><td><code>VOLUME</code></td><td>Create a mount point for volumes</td><td><code>VOLUME /data</code></td></tr>
+    <tr><td><code>USER</code></td><td>Set user for subsequent commands</td><td><code>USER node</code></td></tr>
+    <tr><td><code>LABEL</code></td><td>Add metadata to the image</td><td><code>LABEL version="1.0"</code></td></tr>
+  </table>
+
+  <h3>Example 1 — Node.js App</h3>
+  <span class="code-label">Dockerfile</span>
+  <div class="code-block">
+<span class="comment"># 1. Start from official Node image (alpine = small size)</span>
+<span class="kw">FROM</span> <span class="val">node:18-alpine</span>
+
+<span class="comment"># 2. Set working directory</span>
+<span class="kw">WORKDIR</span> <span class="val">/app</span>
+
+<span class="comment"># 3. Copy package.json FIRST (for caching benefit)</span>
+<span class="kw">COPY</span> <span class="val">package*.json ./</span>
+
+<span class="comment"># 4. Install dependencies</span>
+<span class="kw">RUN</span> <span class="cmd">npm install</span>
+
+<span class="comment"># 5. Copy rest of the code</span>
+<span class="kw">COPY</span> <span class="val">. .</span>
+
+<span class="comment"># 6. Set env variable</span>
+<span class="kw">ENV</span> <span class="val">PORT=3000</span>
+
+<span class="comment"># 7. Document the port</span>
+<span class="kw">EXPOSE</span> <span class="val">3000</span>
+
+<span class="comment"># 8. Start the app</span>
+<span class="kw">CMD</span> <span class="val">["node", "server.js"]</span>
+  </div>
+
+  <h3>Example 2 — Python Flask App</h3>
+  <span class="code-label">Dockerfile</span>
+  <div class="code-block">
+<span class="kw">FROM</span> <span class="val">python:3.11-slim</span>
+
+<span class="kw">WORKDIR</span> <span class="val">/app</span>
+
+<span class="kw">COPY</span> <span class="val">requirements.txt .</span>
+<span class="kw">RUN</span> <span class="cmd">pip install --no-cache-dir -r requirements.txt</span>
+
+<span class="kw">COPY</span> <span class="val">. .</span>
+
+<span class="kw">EXPOSE</span> <span class="val">5000</span>
+
+<span class="kw">CMD</span> <span class="val">["python", "app.py"]</span>
+  </div>
+
+  <h3>Multi-Stage Build (Advanced + Best Practice)</h3>
+  <div class="tip"><strong>Why?</strong> Build stage has all dev tools (compilers etc.). Final stage has ONLY the output. Result: tiny production image.</div>
+  <span class="code-label">Dockerfile (multi-stage)</span>
+  <div class="code-block">
+<span class="comment"># Stage 1: Build</span>
+<span class="kw">FROM</span> <span class="val">node:18</span> <span class="kw">AS</span> <span class="val">builder</span>
+<span class="kw">WORKDIR</span> <span class="val">/app</span>
+<span class="kw">COPY</span> <span class="val">. .</span>
+<span class="kw">RUN</span> <span class="cmd">npm install && npm run build</span>
+
+<span class="comment"># Stage 2: Serve (only copy the built output!)</span>
+<span class="kw">FROM</span> <span class="val">nginx:alpine</span>
+<span class="kw">COPY</span> <span class="flag">--from=builder</span> <span class="val">/app/dist /usr/share/nginx/html</span>
+<span class="comment"># Result: tiny nginx image, no node_modules!</span>
+  </div>
+
+  <h3>.dockerignore File</h3>
+  <div class="tip"><strong>Always create this!</strong> Tells Docker what NOT to copy — like .gitignore but for Docker builds.</div>
+  <span class="code-label">.dockerignore</span>
+  <div class="code-block">
+<span class="val">node_modules</span>
+<span class="val">.git</span>
+<span class="val">.env</span>
+<span class="val">*.log</span>
+<span class="val">README.md</span>
+<span class="val">dist</span>
+  </div>
+</div>
+
+<!-- ⑤ COMMANDS -->
+<div class="section" id="commands">
+  <h2>⑤ Essential Commands</h2>
+
+  <h3>🖼️ Image Commands</h3>
+  <div class="code-block">
+<span class="comment"># Pull an image from Docker Hub</span>
+<span class="cmd">docker pull</span> <span class="val">nginx:latest</span>
+
+<span class="comment"># Build image from Dockerfile in current dir</span>
+<span class="cmd">docker build</span> <span class="flag">-t</span> <span class="val">myapp:1.0</span> <span class="val">.</span>
+
+<span class="comment"># List all local images</span>
+<span class="cmd">docker images</span>
+
+<span class="comment"># Remove an image</span>
+<span class="cmd">docker rmi</span> <span class="val">myapp:1.0</span>
+
+<span class="comment"># Remove all unused images</span>
+<span class="cmd">docker image prune</span> <span class="flag">-a</span>
+
+<span class="comment"># Push image to Docker Hub</span>
+<span class="cmd">docker push</span> <span class="val">username/myapp:1.0</span>
+
+<span class="comment"># Inspect image details (layers, env, etc.)</span>
+<span class="cmd">docker inspect</span> <span class="val">myapp:1.0</span>
+  </div>
+
+  <h3>📦 Container Commands</h3>
+  <div class="code-block">
+<span class="comment"># Run a container (basic)</span>
+<span class="cmd">docker run</span> <span class="val">nginx</span>
+
+<span class="comment"># Run in background (detached)</span>
+<span class="cmd">docker run</span> <span class="flag">-d</span> <span class="val">nginx</span>
+
+<span class="comment"># Run with port mapping  host:container</span>
+<span class="cmd">docker run</span> <span class="flag">-d -p</span> <span class="val">8080:80</span> <span class="val">nginx</span>
+
+<span class="comment"># Run with a name</span>
+<span class="cmd">docker run</span> <span class="flag">-d --name</span> <span class="val">my-nginx -p 8080:80</span> <span class="val">nginx</span>
+
+<span class="comment"># Run with environment variable</span>
+<span class="cmd">docker run</span> <span class="flag">-e</span> <span class="val">NODE_ENV=production</span> <span class="val">myapp</span>
+
+<span class="comment"># Run interactively (bash shell)</span>
+<span class="cmd">docker run</span> <span class="flag">-it</span> <span class="val">ubuntu bash</span>
+
+<span class="comment"># Run and auto-remove when stopped</span>
+<span class="cmd">docker run</span> <span class="flag">--rm</span> <span class="val">ubuntu echo "hello"</span>
+
+<span class="comment"># List running containers</span>
+<span class="cmd">docker ps</span>
+
+<span class="comment"># List ALL containers (including stopped)</span>
+<span class="cmd">docker ps</span> <span class="flag">-a</span>
+
+<span class="comment"># Stop a container</span>
+<span class="cmd">docker stop</span> <span class="val">my-nginx</span>
+
+<span class="comment"># Start a stopped container</span>
+<span class="cmd">docker start</span> <span class="val">my-nginx</span>
+
+<span class="comment"># Remove a container</span>
+<span class="cmd">docker rm</span> <span class="val">my-nginx</span>
+
+<span class="comment"># Force remove running container</span>
+<span class="cmd">docker rm</span> <span class="flag">-f</span> <span class="val">my-nginx</span>
+
+<span class="comment"># View container logs</span>
+<span class="cmd">docker logs</span> <span class="val">my-nginx</span>
+
+<span class="comment"># Follow logs in real time</span>
+<span class="cmd">docker logs</span> <span class="flag">-f</span> <span class="val">my-nginx</span>
+
+<span class="comment"># Execute command inside running container</span>
+<span class="cmd">docker exec</span> <span class="flag">-it</span> <span class="val">my-nginx bash</span>
+
+<span class="comment"># Copy file from container to host</span>
+<span class="cmd">docker cp</span> <span class="val">my-nginx:/etc/nginx/nginx.conf ./nginx.conf</span>
+
+<span class="comment"># View resource usage</span>
+<span class="cmd">docker stats</span>
+  </div>
+
+  <h3>🧹 Cleanup Commands</h3>
+  <div class="code-block">
+<span class="comment"># Remove all stopped containers</span>
+<span class="cmd">docker container prune</span>
+
+<span class="comment"># Remove all unused images</span>
+<span class="cmd">docker image prune</span> <span class="flag">-a</span>
+
+<span class="comment"># Remove all unused volumes</span>
+<span class="cmd">docker volume prune</span>
+
+<span class="comment"># Nuclear option: clean EVERYTHING unused</span>
+<span class="cmd">docker system prune</span> <span class="flag">-a</span>
+
+<span class="comment"># Show disk usage</span>
+<span class="cmd">docker system df</span>
+  </div>
+
+  <h3>docker run Flags Reference</h3>
+  <table>
+    <tr><th>Flag</th><th>Meaning</th><th>Example</th></tr>
+    <tr><td><code>-d</code></td><td>Run in background (detached)</td><td><code>docker run -d nginx</code></td></tr>
+    <tr><td><code>-p</code></td><td>Port mapping host:container</td><td><code>-p 8080:80</code></td></tr>
+    <tr><td><code>-v</code></td><td>Mount volume</td><td><code>-v ./data:/data</code></td></tr>
+    <tr><td><code>-e</code></td><td>Environment variable</td><td><code>-e DB_HOST=localhost</code></td></tr>
+    <tr><td><code>--name</code></td><td>Container name</td><td><code>--name my-app</code></td></tr>
+    <tr><td><code>-it</code></td><td>Interactive + TTY (for shell)</td><td><code>-it ubuntu bash</code></td></tr>
+    <tr><td><code>--rm</code></td><td>Auto-delete when stopped</td><td><code>--rm alpine echo hi</code></td></tr>
+    <tr><td><code>--network</code></td><td>Attach to a network</td><td><code>--network my-net</code></td></tr>
+    <tr><td><code>--restart</code></td><td>Restart policy</td><td><code>--restart always</code></td></tr>
+    <tr><td><code>-m</code></td><td>Memory limit</td><td><code>-m 512m</code></td></tr>
+  </table>
+</div>
+
+<!-- ⑥ NETWORKING -->
+<div class="section" id="networking">
+  <h2>⑥ Docker Networking</h2>
+
+  <div class="card">
+    <p>By default, containers are isolated. Networking lets them talk to each other or the outside world.</p>
+  </div>
+
+  <h3>Network Types</h3>
+  <div class="card-grid">
+    <div class="card-sm">
+      <div class="label">Default</div>
+      <h4>🌉 Bridge</h4>
+      <p>Default. Containers on the same bridge can talk. Access outside via port mapping. Best for single-host apps.</p>
+    </div>
+    <div class="card-sm">
+      <div class="label">Direct</div>
+      <h4>🖥️ Host</h4>
+      <p>Container uses host's network directly (no isolation). Faster but less secure. Linux only.</p>
+    </div>
+    <div class="card-sm">
+      <div class="label">Isolated</div>
+      <h4>🚫 None</h4>
+      <p>No networking at all. Completely isolated. Use for security-sensitive batch tasks.</p>
+    </div>
+    <div class="card-sm">
+      <div class="label">Multi-host</div>
+      <h4>🌐 Overlay</h4>
+      <p>Connects containers across multiple Docker hosts (Docker Swarm). Used in production clusters.</p>
+    </div>
+  </div>
+
+  <div class="diagram">
+    <div class="diagram-title">Custom Bridge Network — Containers Communicating</div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
+      <div style="border:2px dashed var(--border);border-radius:12px;padding:20px 30px;width:100%;max-width:500px;">
+        <div style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--muted);margin-bottom:16px;">my-network (Bridge)</div>
+        <div style="display:flex;gap:20px;justify-content:center;flex-wrap:wrap;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div class="arch-box box-blue">web (nginx)</div>
+            <div style="font-size:0.7rem;color:var(--muted)">Port 80</div>
+          </div>
+          <div style="font-size:1.5rem;color:var(--accent);align-self:center">⇄</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div class="arch-box box-green">api (node)</div>
+            <div style="font-size:0.7rem;color:var(--muted)">Port 3000</div>
+          </div>
+          <div style="font-size:1.5rem;color:var(--accent);align-self:center">⇄</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div class="arch-box box-orange">db (postgres)</div>
+            <div style="font-size:0.7rem;color:var(--muted)">Port 5432</div>
+          </div>
+        </div>
+      </div>
+      <div class="arch-arrow">↕ Port 8080:80</div>
+      <div class="arch-box box-purple">🌍 Internet / Browser</div>
+    </div>
+    <p class="tip" style="margin-top:16px"><strong>Key:</strong> On a custom network, containers reference each other by <em>name</em> (e.g., <code style="color:var(--green)">http://db:5432</code>). DNS is built-in!</p>
+  </div>
+
+  <h3>Network Commands</h3>
+  <div class="code-block">
+<span class="comment"># List networks</span>
+<span class="cmd">docker network ls</span>
+
+<span class="comment"># Create a custom bridge network</span>
+<span class="cmd">docker network create</span> <span class="val">my-network</span>
+
+<span class="comment"># Run container on a specific network</span>
+<span class="cmd">docker run</span> <span class="flag">--network</span> <span class="val">my-network --name db postgres</span>
+
+<span class="comment"># Connect existing container to a network</span>
+<span class="cmd">docker network connect</span> <span class="val">my-network my-container</span>
+
+<span class="comment"># Disconnect</span>
+<span class="cmd">docker network disconnect</span> <span class="val">my-network my-container</span>
+
+<span class="comment"># Inspect a network</span>
+<span class="cmd">docker network inspect</span> <span class="val">my-network</span>
+
+<span class="comment"># Remove a network</span>
+<span class="cmd">docker network rm</span> <span class="val">my-network</span>
+  </div>
+</div>
+
+<!-- ⑦ VOLUMES -->
+<div class="section" id="volumes">
+  <h2>⑦ Docker Volumes</h2>
+
+  <div class="card">
+    <p>Container filesystem is <strong style="color:var(--red)">temporary</strong> — when container dies, data dies too. Volumes solve this by storing data <em>outside</em> the container on the host.</p>
+  </div>
+
+  <div class="diagram">
+    <div class="diagram-title">3 Types of Storage</div>
+    <div class="card-grid">
+      <div class="card-sm">
+        <div class="label">Type 1</div>
+        <h4 style="color:var(--accent2)">📁 Named Volume</h4>
+        <p>Managed by Docker. Stored in Docker's own area. Best for production. Persists after container removal.</p>
+        <div style="margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--green)">-v mydata:/data</div>
+      </div>
+      <div class="card-sm">
+        <div class="label">Type 2</div>
+        <h4 style="color:var(--orange)">📂 Bind Mount</h4>
+        <p>Maps a specific host folder into container. Great for development — live code reload!</p>
+        <div style="margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--green)">-v ./src:/app/src</div>
+      </div>
+      <div class="card-sm">
+        <div class="label">Type 3</div>
+        <h4 style="color:var(--purple)">💨 tmpfs Mount</h4>
+        <p>In-memory only. Super fast but lost on stop. For sensitive temp data (secrets, sessions).</p>
+        <div style="margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--green)">--tmpfs /tmp</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Volume Commands</h3>
+  <div class="code-block">
+<span class="comment"># Create a named volume</span>
+<span class="cmd">docker volume create</span> <span class="val">mydata</span>
+
+<span class="comment"># List volumes</span>
+<span class="cmd">docker volume ls</span>
+
+<span class="comment"># Inspect a volume (see where it's stored)</span>
+<span class="cmd">docker volume inspect</span> <span class="val">mydata</span>
+
+<span class="comment"># Use named volume with container</span>
+<span class="cmd">docker run</span> <span class="flag">-v</span> <span class="val">mydata:/var/lib/postgresql/data</span> <span class="val">postgres</span>
+
+<span class="comment"># Bind mount current dir into container (dev workflow)</span>
+<span class="cmd">docker run</span> <span class="flag">-v</span> <span class="val">$(pwd):/app</span> <span class="flag">-p</span> <span class="val">3000:3000</span> <span class="val">node:18 npm start</span>
+
+<span class="comment"># Remove a volume</span>
+<span class="cmd">docker volume rm</span> <span class="val">mydata</span>
+
+<span class="comment"># Remove all unused volumes</span>
+<span class="cmd">docker volume prune</span>
+  </div>
+
+  <h3>Real Example: PostgreSQL with Persistence</h3>
+  <div class="code-block">
+<span class="comment"># Without volume — data LOST when container stops!</span>
+<span class="cmd">docker run</span> <span class="flag">-e</span> <span class="val">POSTGRES_PASSWORD=secret postgres</span>
+
+<span class="comment"># With volume — data PERSISTS! ✓</span>
+<span class="cmd">docker run</span> <span class="flag">-d \
+  -e</span> <span class="val">POSTGRES_PASSWORD=secret \</span>
+  <span class="flag">-v</span> <span class="val">pgdata:/var/lib/postgresql/data \</span>
+  <span class="flag">-p</span> <span class="val">5432:5432 \</span>
+  <span class="flag">--name</span> <span class="val">my-postgres \</span>
+  <span class="val">postgres:15</span>
+  </div>
+</div>
+
+<!-- ⑧ COMPOSE -->
+<div class="section" id="compose">
+  <h2>⑧ Docker Compose</h2>
+
+  <div class="card">
+    <p>Managing multiple containers with individual <code style="color:var(--accent2)">docker run</code> commands is painful. <strong style="color:var(--accent2)">Docker Compose</strong> lets you define your entire multi-container app in <em>one YAML file</em> and start everything with one command.</p>
+  </div>
+
+  <div class="tip"><strong>docker compose up</strong> → starts all containers defined in docker-compose.yml<br><strong>docker compose down</strong> → stops and removes them all</div>
+
+  <h3>docker-compose.yml Structure</h3>
+  <div class="code-block">
+<span class="comment"># docker-compose.yml — Full Stack App Example</span>
+<span class="kw">version</span>: <span class="val">'3.8'</span>
+
+<span class="kw">services</span>:
+
+  <span class="comment"># Frontend (React)</span>
+  <span class="kw">frontend</span>:
+    <span class="kw">build</span>: <span class="val">./frontend</span>
+    <span class="kw">ports</span>:
+      - <span class="val">"3000:3000"</span>
+    <span class="kw">depends_on</span>:
+      - <span class="val">backend</span>
+    <span class="kw">environment</span>:
+      - <span class="val">REACT_APP_API=http://localhost:5000</span>
+
+  <span class="comment"># Backend (Node.js API)</span>
+  <span class="kw">backend</span>:
+    <span class="kw">build</span>: <span class="val">./backend</span>
+    <span class="kw">ports</span>:
+      - <span class="val">"5000:5000"</span>
+    <span class="kw">depends_on</span>:
+      - <span class="val">db</span>
+    <span class="kw">environment</span>:
+      - <span class="val">DB_HOST=db</span>
+      - <span class="val">DB_PASSWORD=secret</span>
+    <span class="kw">volumes</span>:
+      - <span class="val">./backend:/app</span>  <span class="comment"># bind mount for dev</span>
+
+  <span class="comment"># Database (PostgreSQL)</span>
+  <span class="kw">db</span>:
+    <span class="kw">image</span>: <span class="val">postgres:15</span>
+    <span class="kw">environment</span>:
+      - <span class="val">POSTGRES_PASSWORD=secret</span>
+      - <span class="val">POSTGRES_DB=myapp</span>
+    <span class="kw">volumes</span>:
+      - <span class="val">pgdata:/var/lib/postgresql/data</span>
+    <span class="kw">ports</span>:
+      - <span class="val">"5432:5432"</span>
+
+<span class="kw">volumes</span>:
+  <span class="kw">pgdata</span>:  <span class="comment"># named volume</span>
+  </div>
+
+  <h3>Docker Compose Commands</h3>
+  <div class="code-block">
+<span class="comment"># Start all services (build if needed)</span>
+<span class="cmd">docker compose up</span>
+
+<span class="comment"># Start in background</span>
+<span class="cmd">docker compose up</span> <span class="flag">-d</span>
+
+<span class="comment"># Rebuild images and start</span>
+<span class="cmd">docker compose up</span> <span class="flag">--build</span>
+
+<span class="comment"># Stop and remove containers + networks</span>
+<span class="cmd">docker compose down</span>
+
+<span class="comment"># Stop and remove + volumes</span>
+<span class="cmd">docker compose down</span> <span class="flag">-v</span>
+
+<span class="comment"># View running services</span>
+<span class="cmd">docker compose ps</span>
+
+<span class="comment"># View logs of all services</span>
+<span class="cmd">docker compose logs</span> <span class="flag">-f</span>
+
+<span class="comment"># View logs of one service</span>
+<span class="cmd">docker compose logs</span> <span class="flag">-f</span> <span class="val">backend</span>
+
+<span class="comment"># Run a one-off command in a service</span>
+<span class="cmd">docker compose exec</span> <span class="val">backend bash</span>
+
+<span class="comment"># Scale a service to 3 instances</span>
+<span class="cmd">docker compose up</span> <span class="flag">--scale</span> <span class="val">backend=3</span>
+
+<span class="comment"># Restart a single service</span>
+<span class="cmd">docker compose restart</span> <span class="val">backend</span>
+  </div>
+
+  <h3>Compose Architecture Visualized</h3>
+  <div class="diagram">
+    <div class="diagram-title">docker-compose.yml → Full Stack App</div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+      <div class="arch-box box-purple" style="padding:10px 30px">🌍 Browser (Port 3000)</div>
+      <div class="arch-arrow">↕</div>
+      <div style="border:2px dashed var(--border);border-radius:12px;padding:20px;width:100%;max-width:560px;">
+        <div style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--accent);margin-bottom:16px;">docker compose (app-network)</div>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+            <div class="arch-box box-blue">frontend :3000</div>
+            <div style="font-size:0.7rem;color:var(--muted)">React</div>
+          </div>
+          <div style="font-size:1.4rem;color:var(--muted);align-self:center">→</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+            <div class="arch-box box-green">backend :5000</div>
+            <div style="font-size:0.7rem;color:var(--muted)">Node API</div>
+          </div>
+          <div style="font-size:1.4rem;color:var(--muted);align-self:center">→</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+            <div class="arch-box box-orange">db :5432</div>
+            <div style="font-size:0.7rem;color:var(--muted)">PostgreSQL</div>
+          </div>
+        </div>
+      </div>
+      <div class="arch-arrow">↕</div>
+      <div class="arch-box box-red" style="padding:10px 30px">💾 pgdata Volume (persisted)</div>
+    </div>
+  </div>
+</div>
+
+<!-- ⑨ INTEGRATION -->
+<div class="section" id="integration">
+  <h2>⑨ Docker Integrations</h2>
+
+  <h3>Common Tool Integrations</h3>
+  <div class="int-grid">
+    <div class="int-card">
+      <span class="icon">🔧</span>
+      <h4>GitHub Actions</h4>
+      <p>Auto-build & push Docker images on every commit/PR</p>
+    </div>
+    <div class="int-card">
+      <span class="icon">☸️</span>
+      <h4>Kubernetes</h4>
+      <p>Orchestrate Docker containers at massive scale</p>
+    </div>
+    <div class="int-card">
+      <span class="icon">🔵</span>
+      <h4>VS Code</h4>
+      <p>Dev Containers extension — develop inside a container</p>
+    </div>
+    <div class="int-card">
+      <span class="icon">🔴</span>
+      <h4>Jenkins</h4>
+      <p>Run CI/CD pipelines inside Docker containers</p>
+    </div>
+    <div class="int-card">
+      <span class="icon">☁️</span>
+      <h4>AWS ECS / EKS</h4>
+      <p>Deploy Docker containers on AWS managed services</p>
+    </div>
+    <div class="int-card">
+      <span class="icon">🌊</span>
+      <h4>Docker Swarm</h4>
+      <p>Native Docker clustering for multi-host deployments</p>
+    </div>
+    <div class="int-card">
+      <span class="icon">🏗️</span>
+      <h4>Terraform</h4>
+      <p>Provision infra + deploy Docker containers as code</p>
+    </div>
+    <div class="int-card">
+      <span class="icon">📊</span>
+      <h4>Prometheus + Grafana</h4>
+      <p>Monitor container metrics and visualize dashboards</p>
+    </div>
+  </div>
+
+  <h3>CI/CD Pipeline with Docker + GitHub Actions</h3>
+  <div class="diagram">
+    <div class="diagram-title">Automated Build → Push → Deploy Flow</div>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-num">DEV</div>
+        <div class="flow-content">
+          <h4>git push to GitHub</h4>
+          <p>Developer pushes code to main/feature branch</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">CI</div>
+        <div class="flow-content">
+          <h4>GitHub Actions triggers</h4>
+          <p>Runs tests inside Docker container, then builds image</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">REGISTRY</div>
+        <div class="flow-content">
+          <h4>docker push to Docker Hub / ECR</h4>
+          <p>Tagged image (e.g. <code style="color:var(--green)">myapp:v1.2.3</code>) pushed to registry</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">DEPLOY</div>
+        <div class="flow-content">
+          <h4>Pull & deploy on server</h4>
+          <p>Server pulls new image and runs updated container (zero downtime)</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <span class="code-label">.github/workflows/docker.yml</span>
+  <div class="code-block">
+<span class="kw">name</span>: <span class="val">Build and Push Docker Image</span>
+
+<span class="kw">on</span>:
+  <span class="kw">push</span>:
+    <span class="kw">branches</span>: [<span class="val">main</span>]
+
+<span class="kw">jobs</span>:
+  <span class="kw">build</span>:
+    <span class="kw">runs-on</span>: <span class="val">ubuntu-latest</span>
+    <span class="kw">steps</span>:
+      - <span class="kw">uses</span>: <span class="val">actions/checkout@v3</span>
+
+      - <span class="kw">name</span>: <span class="val">Login to Docker Hub</span>
+        <span class="kw">uses</span>: <span class="val">docker/login-action@v2</span>
+        <span class="kw">with</span>:
+          <span class="kw">username</span>: <span class="val">${{ secrets.DOCKERHUB_USERNAME }}</span>
+          <span class="kw">password</span>: <span class="val">${{ secrets.DOCKERHUB_TOKEN }}</span>
+
+      - <span class="kw">name</span>: <span class="val">Build and push</span>
+        <span class="kw">uses</span>: <span class="val">docker/build-push-action@v4</span>
+        <span class="kw">with</span>:
+          <span class="kw">push</span>: <span class="val">true</span>
+          <span class="kw">tags</span>: <span class="val">username/myapp:latest</span>
+  </div>
+
+  <h3>VS Code Dev Containers</h3>
+  <div class="tip"><strong>Dev Containers</strong> let you develop <em>inside</em> a Docker container. Your entire dev environment (extensions, tools, dependencies) is defined in code. New team member? Just open the project and click "Reopen in Container."</div>
+  <span class="code-label">.devcontainer/devcontainer.json</span>
+  <div class="code-block">
+{
+  <span class="kw">"name"</span>: <span class="val">"My Node App"</span>,
+  <span class="kw">"image"</span>: <span class="val">"mcr.microsoft.com/devcontainers/node:18"</span>,
+  <span class="kw">"forwardPorts"</span>: [<span class="val">3000</span>],
+  <span class="kw">"postCreateCommand"</span>: <span class="val">"npm install"</span>,
+  <span class="kw">"extensions"</span>: [
+    <span class="val">"esbenp.prettier-vscode"</span>,
+    <span class="val">"dbaeumer.vscode-eslint"</span>
+  ]
+}
+  </div>
+</div>
+
+<!-- ⑩ CHEATSHEET -->
+<div class="section" id="cheatsheet">
+  <h2>⑩ Quick Cheat Sheet</h2>
+
+  <h3>🏃 Most Used Commands</h3>
+  <table>
+    <tr><th>Task</th><th>Command</th></tr>
+    <tr><td>Run nginx on port 8080</td><td><code>docker run -d -p 8080:80 --name web nginx</code></td></tr>
+    <tr><td>Build image</td><td><code>docker build -t myapp:1.0 .</code></td></tr>
+    <tr><td>See running containers</td><td><code>docker ps</code></td></tr>
+    <tr><td>Get a shell inside container</td><td><code>docker exec -it CONTAINER bash</code></td></tr>
+    <tr><td>View logs live</td><td><code>docker logs -f CONTAINER</code></td></tr>
+    <tr><td>Stop & remove all</td><td><code>docker stop $(docker ps -q) && docker rm $(docker ps -aq)</code></td></tr>
+    <tr><td>Start compose stack</td><td><code>docker compose up -d</code></td></tr>
+    <tr><td>Stop compose stack</td><td><code>docker compose down</code></td></tr>
+    <tr><td>Pull latest image</td><td><code>docker pull IMAGE:latest</code></td></tr>
+    <tr><td>Push to registry</td><td><code>docker push username/IMAGE:tag</code></td></tr>
+    <tr><td>Clean everything unused</td><td><code>docker system prune -a</code></td></tr>
+    <tr><td>See resource usage</td><td><code>docker stats</code></td></tr>
+  </table>
+
+  <h3>📋 Dockerfile Best Practices</h3>
+  <div class="card-grid">
+    <div class="card-sm">
+      <div class="label">✓ Do</div>
+      <h4 style="color:var(--green)">Good Practices</h4>
+      <ul style="list-style:none;font-size:0.85rem;color:#94a3b8;">
+        <li style="padding:3px 0">✅ Use alpine/slim base images</li>
+        <li style="padding:3px 0">✅ COPY package.json before COPY .</li>
+        <li style="padding:3px 0">✅ Use .dockerignore</li>
+        <li style="padding:3px 0">✅ Use multi-stage builds</li>
+        <li style="padding:3px 0">✅ Pin image versions (node:18, not node:latest)</li>
+        <li style="padding:3px 0">✅ Run as non-root USER</li>
+        <li style="padding:3px 0">✅ One process per container</li>
+      </ul>
+    </div>
+    <div class="card-sm">
+      <div class="label">✗ Avoid</div>
+      <h4 style="color:var(--red)">Bad Practices</h4>
+      <ul style="list-style:none;font-size:0.85rem;color:#94a3b8;">
+        <li style="padding:3px 0">❌ COPY . . before installing deps</li>
+        <li style="padding:3px 0">❌ Using :latest in production</li>
+        <li style="padding:3px 0">❌ Storing secrets in Dockerfile</li>
+        <li style="padding:3px 0">❌ Running as root</li>
+        <li style="padding:3px 0">❌ Too many RUN commands (use && to chain)</li>
+        <li style="padding:3px 0">❌ Ignoring .dockerignore</li>
+        <li style="padding:3px 0">❌ Large base images when small works</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>🗺️ Concepts Mind Map</h3>
+  <div class="diagram">
+    <div class="diagram-title">How everything connects</div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+      <div class="arch-box box-blue" style="padding:14px 40px;font-size:1rem">🐳 Docker</div>
+      <div style="display:flex;gap:60px;flex-wrap:wrap;justify-content:center;margin-top:8px;">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+          <div class="arch-arrow" style="margin:0">↓</div>
+          <div class="arch-box box-purple">Image</div>
+          <div class="arch-arrow" style="margin:0">↓</div>
+          <div class="arch-box box-gray" style="font-size:0.72rem">Dockerfile → docker build</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+          <div class="arch-arrow" style="margin:0">↓</div>
+          <div class="arch-box box-green">Container</div>
+          <div class="arch-arrow" style="margin:0">↓</div>
+          <div class="arch-box box-gray" style="font-size:0.72rem">Image → docker run</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+          <div class="arch-arrow" style="margin:0">↓</div>
+          <div class="arch-box box-orange">Registry</div>
+          <div class="arch-arrow" style="margin:0">↓</div>
+          <div class="arch-box box-gray" style="font-size:0.72rem">Docker Hub / Private</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+          <div class="arch-arrow" style="margin:0">↓</div>
+          <div class="arch-box box-red">Compose</div>
+          <div class="arch-arrow" style="margin:0">↓</div>
+          <div class="arch-box box-gray" style="font-size:0.72rem">Multi-container apps</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip" style="font-size:0.92rem;margin-top:24px">
+    <strong>Learning Path:</strong> Intro → Run your first container (<code style="color:var(--green)">docker run hello-world</code>) → Write a Dockerfile → Compose a multi-service app → Integrate with CI/CD. That's the full journey! 🚀
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<script>
+function show(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
