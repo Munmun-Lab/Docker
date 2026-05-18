@@ -137,3 +137,53 @@ CMD ["./api"]
 - **Use `AS` names** — makes `--from` references readable and lets you use `--target` during builds
 - **`scratch`** is a valid base for statically compiled binaries (Go, Rust) — it has zero OS overhead
 - **`distroless`** images (from Google) are a good middle ground — no shell, but have libc and CA certs
+
+---
+
+---
+
+## `scratch` in Docker
+
+`scratch` is a **completely empty base image** — no OS, no shell, no files whatsoever. It's Docker's reserved minimal image.
+
+```dockerfile
+FROM scratch
+COPY --from=builder /app/server /server
+ENTRYPOINT ["/server"]
+```
+
+### What it contains
+Literally **nothing**. No:
+- Shell (`sh`, `bash`)
+- Package manager
+- libc / system libraries
+- CA certificates
+
+### When to use it
+Only works for **statically compiled binaries** — Go and Rust are the most common:
+
+```go
+// Go: build a truly static binary
+CGO_ENABLED=0 GOOS=linux go build -o server .
+```
+
+### Pros & Cons
+
+| ✅ Pros | ❌ Cons |
+|---|---|
+| Smallest possible image (MBs) | Can't `docker exec` into it (no shell) |
+| Zero attack surface | No debugging tools |
+| Nothing unnecessary ships | Must bundle CA certs manually if needed HTTPS |
+
+### CA certs workaround (if your app makes HTTPS calls)
+```dockerfile
+FROM alpine AS certs
+RUN apk add ca-certificates
+
+FROM scratch
+COPY --from=certs /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=builder /app/server /server
+ENTRYPOINT ["/server"]
+```
+
+**Bottom line:** `scratch` = maximum minimalism. Great for Go/Rust microservices in production; impractical for anything that needs an OS or dynamic linking.
