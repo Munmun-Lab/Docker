@@ -139,7 +139,7 @@ CMD ["./api"]
 - **`distroless`** images (from Google) are a good middle ground — no shell, but have libc and CA certs
 
 ---
-
+***
 ---
 
 ## `scratch` in Docker
