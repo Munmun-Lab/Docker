@@ -187,3 +187,67 @@ ENTRYPOINT ["/server"]
 ```
 
 **Bottom line:** `scratch` = maximum minimalism. Great for Go/Rust microservices in production; impractical for anything that needs an OS or dynamic linking.
+
+---
+***
+---
+
+## `scratch` and Windows Containers
+
+**No, you cannot use `scratch` with Windows-based containers.** This is a hard limitation.
+
+### Why Not?
+
+Windows containers **require the Windows kernel userspace layer** to function. Even the simplest Windows app needs:
+- `ntdll.dll` — core Windows API
+- Windows registry
+- Windows loader to execute `.exe` files
+
+`scratch` provides none of that. A Windows binary can't run in a void the way a statically compiled Linux binary can.
+
+---
+
+### Windows Base Image Hierarchy
+
+Microsoft provides its own "minimal" base images instead:
+
+```
+nanoserver  ←  closest equivalent to scratch on Windows
+    ↑
+servercore  ←  fuller Windows Server Core
+    ↑
+windows     ←  full Windows base image
+```
+
+**`nanoserver`** is the closest you'll get to `scratch` on Windows:
+```dockerfile
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS builder
+WORKDIR /app
+COPY . .
+RUN dotnet publish -c Release -o out
+
+FROM mcr.microsoft.com/windows/nanoserver:ltsc2022
+WORKDIR /app
+COPY --from=builder /app/out .
+ENTRYPOINT ["app.exe"]
+```
+
+---
+
+### Comparison
+
+| | `scratch` (Linux) | `nanoserver` (Windows) |
+|---|---|---|
+| Base size | **0 MB** | ~100–300 MB |
+| Shell | None | None |
+| Debuggability | Very hard | Hard |
+| Use case | Go/Rust static binaries | .NET, minimal Windows apps |
+
+---
+
+### Bottom Line
+
+> On Windows containers, **`nanoserver` is your `scratch`** — it's as small as it gets, but it still carries the minimum Windows userspace needed to run `.exe` files.
+
+`scratch` is fundamentally a **Linux-only** concept.
+
