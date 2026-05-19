@@ -34,6 +34,22 @@ This is a major production issue.
 
 ---
 
+# Problem Visualization
+
+```text id="h5x1tr"
+Docker Container
+ ├── Application
+ ├── Logs
+ ├── Database Files
+ └── Temporary Storage
+
+Container Deleted
+       ↓
+All Data Deleted
+```
+
+---
+
 # Without Persistent Storage
 
 ```text id="g6m2kp"
@@ -48,18 +64,40 @@ Data Lost ❌
 
 ---
 
-# Solution
+# Why Persistent Storage Needed?
 
-Docker provides:
+Needed for:
 
-* Bind Mounts
-* Volumes
+* Databases
+* Application uploads
+* Logs
+* Configuration files
+* Backups
+* Shared storage
+
+---
+
+# Docker Persistent Storage Solutions
+
+| Type           | Description                    |
+| -------------- | ------------------------------ |
+| Bind Mounts    | Mount local host directory     |
+| Docker Volumes | Docker-managed storage         |
+| tmpfs Mounts   | Memory-based temporary storage |
 
 to store data outside container lifecycle.
 
 ---
 
 # Persistent Storage Architecture
+
+```text id="r9v4pl"
+Application Container
+        ↓
+Persistent Storage
+   ├── Bind Mount
+   └── Docker Volume
+```
 
 ```text id="u2n7qw"
 Docker Container
@@ -94,6 +132,26 @@ Bind Mount
         ↓
 Container Folder
 (/app/data)
+```
+
+```text id="c6t1wx"
+Host Server
+ └── /data/mysql
+
+        ↓ Mounted
+
+Docker Container
+ └── /var/lib/mysql
+```
+
+---
+
+# Bind Mount Command
+
+```bash id="m1p8vr"
+docker run -d \
+-v /host-data:/container-data \
+nginx
 ```
 
 ---
@@ -140,6 +198,28 @@ Host files become accessible inside container
 
 ---
 
+# Example
+
+```bash id="t5x3qn"
+docker run -d \
+-v /home/user/website:/usr/share/nginx/html \
+-p 8080:80 nginx
+```
+
+---
+
+# What Happens?
+
+```text id="w2n9kp"
+Host Folder:
+ /home/user/website
+
+Mapped To:
+ /usr/share/nginx/html
+
+inside container
+```
+
 # Real-Time Bind Mount Use Cases
 
 | Use Case            | Purpose                      |
@@ -148,6 +228,16 @@ Host files become accessible inside container
 | Configuration Files | Share configs                |
 | Logs                | Store logs outside container |
 | Local Testing       | Easy debugging               |
+
+# Bind Mount Use Cases
+
+| Use Case      | Example           |
+| ------------- | ----------------- |
+| Development   | Live code changes |
+| Config files  | nginx.conf        |
+| Log sharing   | App logs          |
+| Local testing | Web development   |
+
 
 ---
 
@@ -200,6 +290,30 @@ Docker Managed Storage
 (/var/lib/docker/volumes/)
 ```
 
+```text id="s8w2cn"
+Docker Volume
+      ↓
+Managed by Docker Engine
+      ↓
+Mounted into Container
+```
+
+---
+
+# Volume Storage Location
+
+Linux:
+
+```text id="x5r1md"
+/var/lib/docker/volumes/
+```
+
+Windows:
+
+```text id="b9t4kv"
+C:\ProgramData\Docker\volumes\
+```
+
 ---
 
 # Volume Example
@@ -208,6 +322,16 @@ Docker Managed Storage
 
 ```bash id="x8t2rm"
 docker volume create mysql-data
+```
+
+---
+
+# Mount Volume
+
+```bash id="p4z8nx"
+docker run -d \
+-v mysql-data:/var/lib/mysql \
+mysql
 ```
 
 ---
@@ -252,6 +376,19 @@ Data Still Exists ✅
 
 ---
 
+# Architecture Diagram
+
+```text id="g3v9rc"
+Docker Volume
+   mysql-data
+        ↓
+Docker Engine
+        ↓
+MySQL Container
+```
+
+---
+
 # Verify Volumes
 
 ```bash id="j6v3pw"
@@ -270,15 +407,16 @@ docker volume inspect mysql-data
 
 # 4. Advantages of Volumes over Bind Mounts
 
-| Feature                    | Bind Mount | Docker Volume |
-| -------------------------- | ---------- | ------------- |
-| Docker Managed             | ❌          | ✅             |
-| Portable                   | ❌          | ✅             |
-| Secure                     | Medium     | Better        |
-| Easy Backup                | Medium     | Easy          |
-| Performance                | Medium     | Better        |
-| OS Independent             | ❌          | ✅             |
-| Recommended for Production | ❌          | ✅             |
+| Feature            | Docker Volumes | Bind Mounts     |
+| ------------------ | -------------- | --------------- |
+| Managed by Docker  | Yes            | No              |
+| Portability        | Better         | Limited         |
+| Security           | Better         | Lower           |
+| Backup Friendly    | Yes            | Manual          |
+| OS Independent     | Yes            | No              |
+| Performance        | Better         | Depends on host |
+| Recommended for DB | Yes            | Not ideal       |
+| Easy Sharing       | Yes            | Limited         |
 
 ---
 
@@ -290,21 +428,88 @@ Volumes:
 * easier for backups
 * easier for migration
 * safer for production databases
+* Stateful containers
+* Production apps
+
+Volumes provide:
+
+```text id="q4v7lm"
+Better reliability and portability
+```
 
 ---
 
 # 5. Lifecycle of Docker Volumes
 
-## Volume Lifecycle
+## Step-by-Step Lifecycle
 
-```text id="s5m8qy"
-Volume Created
+---
+
+## Step 1 — Create Volume
+
+```bash id="m7x1pc"
+docker volume create app-data
+```
+
+---
+
+## Step 2 — Attach to Container
+
+```bash id="k3n8zw"
+docker run -d \
+-v app-data:/app/data nginx
+```
+
+---
+
+## Step 3 — Application Writes Data
+
+```text id="w5r2tb"
+Container writes files
+into mounted volume
+```
+
+---
+
+## Step 4 — Container Removed
+
+```bash id="x8m4qv"
+docker rm -f container1
+```
+
+Data:
+
+```text id="p9t1yr"
+Still Exists
+```
+
+---
+
+## Step 5 — Reattach Volume
+
+```bash id="d2v6kc"
+docker run -d \
+-v app-data:/app/data nginx
+```
+
+Old data becomes available again.
+
+---
+
+# Lifecycle Diagram
+
+```text id="e6w9ns"
+Create Volume
       ↓
-Container Uses Volume
+Attach Volume
       ↓
-Container Deleted
+Store Data(Container Uses Volume)
       ↓
-Volume Still Exists
+Delete Container
+      ↓
+Volume Remains(Volume Still Exists)
+      ↓
+Reuse Volume
       ↓
 Volume Manually Removed
 ```
@@ -345,11 +550,38 @@ docker volume prune
 
 # Named Volume Mount
 
+## Using `-v`
+
+```bash id="t1m6qw"
+docker run -d \
+-v myvolume:/data \
+nginx
+```
+
 ```bash id="m8q2vt"
 docker run -d \
 -v app-data:/app/data \
 nginx
 ```
+
+---
+
+# Using `--mount` (Recommended)
+
+```bash id="j9w4py"
+docker run -d \
+--mount source=myvolume,target=/data \
+nginx
+```
+
+---
+
+# Difference
+
+| Method  | Description                 |
+| ------- | --------------------------- |
+| -v      | Short syntax                |
+| --mount | Clear & production-friendly |
 
 ---
 
@@ -441,6 +673,20 @@ Cloud Storage / SSD
 Backup & Disaster Recovery
 ```
 
+# Enterprise Architecture Example
+
+```text id="z7k5tp"
+Users
+   ↓
+Web Application Container
+   ↓
+Database Container
+   ↓
+Docker Volume
+   ↓
+Persistent Data Storage
+```
+
 ---
 
 # Enterprise Storage Examples
@@ -466,6 +712,7 @@ Backup & Disaster Recovery
 | Grafana       | Store dashboards       |
 | Elasticsearch | Store logs             |
 | SonarQube     | Store analysis data    |
+| Nexus         | Artifact storage       |
 
 ---
 
@@ -520,6 +767,31 @@ Docker concepts map directly into Kubernetes:
 | Volume            | Persistent Volume |
 | Bind Mount        | HostPath          |
 | Container Storage | PVC               |
+
+---
+
+# Important Interview Points
+
+| Question                   | Answer                                     |
+| -------------------------- | ------------------------------------------ |
+| Why Volumes?               | To persist data beyond container lifecycle |
+| Why not container storage? | Containers are ephemeral                   |
+| Volume vs Bind Mount?      | Volumes are Docker-managed & portable      |
+| Recommended for DB?        | Docker Volumes                             |
+| Where volumes stored?      | Docker host filesystem                     |
+
+---
+
+# Complete Storage Design
+
+```text id="m8r3qx"
+Docker Host
+ ├── Containers
+ ├── Networks
+ └── Volumes
+        ↓
+Persistent Application Data
+```
 
 ---
 
