@@ -1,7 +1,6 @@
-`ENTRYPOINT` is **not mandatory**.
+# `ENTRYPOINT` is **not mandatory**.
 A Dockerfile can work perfectly with only `CMD`.
 
-Perfect — simplest possible explanation 👇
 
 # 🔹 Think Like This
 
