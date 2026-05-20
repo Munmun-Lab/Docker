@@ -3,6 +3,7 @@
 
 ---
 
+```md id="q4lw5f"
 # 📦 Container Management
 
 Docker container commands are used to create, manage, monitor, and remove running containers.
@@ -21,6 +22,8 @@ Docker container commands are used to create, manage, monitor, and remove runnin
 | Container stats | `docker container stats --no-stream` | Resource usage snapshot |
 | Copy file | `docker container cp <container>:/path /host/path` | Copy files between host and container |
 | Prune stopped | `docker container prune --force` | Remove stopped containers |
+
+```
 
 ---
 
