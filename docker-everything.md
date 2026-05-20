@@ -43,247 +43,203 @@
 
 ---
 
-# 🖼️ Image Management
+## 🖼️ Image Management
 
-- Pull image  
-  `docker image pull <registry>/<image>:<tag>`  
-  Download image from registry
+Pull image: Pull specific tagged image
+docker image pull `<registry>/<image>:<tag>`
 
-- Build image  
-  `docker image build --file Dockerfile --tag <name>:<tag> .`  
-  Build image from Dockerfile
+Build image: Build image with no cache and build arguments
+docker image build --file Dockerfile --tag `<name>:<tag>` --no-cache --build-arg ENV=prod .
 
-- Tag image  
-  `docker image tag <source_image>:<tag> <target_image>:<tag>`  
-  Create new image tag
+Tag image: Tag image for registry push
+docker image tag `<source_image>:<tag>` `<registry>/<image>:<tag>`
 
-- Push image  
-  `docker image push <registry>/<image>:<tag>`  
-  Push image to registry
+Push image: Push image to registry
+docker image push `<registry>/<image>:<tag>`
 
-- List images  
-  `docker image ls --all`  
-  List all images
+List images: List all images
+docker image ls --all
 
-- Remove image  
-  `docker image rm --force <image>:<tag>`  
-  Remove image
+Remove image: Force remove image
+docker image rm --force `<image_id_or_name>:<tag>`
 
-- Inspect image  
-  `docker image inspect <image>:<tag>`  
-  Show image details
+Inspect image: Show image configuration details
+docker image inspect `<image>:<tag>`
 
-- Image history  
-  `docker image history --no-trunc <image>:<tag>`  
-  Show image layers
+Image history: Show full layer history
+docker image history --no-trunc `<image>:<tag>`
 
-- Prune images  
-  `docker image prune --all --force`  
-  Remove unused images
+Prune images: Remove unused images older than 72 hours
+docker image prune --all --force --filter "until=72h"
 
-- Save image  
-  `docker image save --output backup.tar <image>:<tag>`  
-  Save image as tar file
+Save image: Save image to tar file
+docker image save --output /backup/<image>.tar `<image>:<tag>`
 
-- Load image  
-  `docker image load --input backup.tar`  
-  Load image from tar file
+Load image: Load image from tar file
+docker image load --input /backup/<image>.tar
 
 ---
 
-# 🔊 Volume Management
+## 🔊 Volume Management
 
-- Create volume  
-  `docker volume create --name <volume_name>`  
-  Create named volume
+Create volume: Create a named volume
+docker volume create --name `<volume_name>`
 
-- List volumes  
-  `docker volume ls`  
-  List all volumes
+List volumes: List all volumes
+docker volume ls
 
-- Inspect volume  
-  `docker volume inspect <volume_name>`  
-  Show volume details
+Inspect volume: Show volume details
+docker volume inspect `<volume_name>`
 
-- Remove volume  
-  `docker volume rm <volume_name>`  
-  Remove volume
+Remove volume: Remove a volume
+docker volume rm `<volume_name>`
 
-- Prune volumes  
-  `docker volume prune --force`  
-  Remove unused volumes
+Prune volumes: Remove unused volumes
+docker volume prune --force --filter "label!=keep"
 
 ---
 
-# 🌐 Network Management
+## 🌐 Network Management
 
-- Create network  
-  `docker network create --driver bridge <network_name>`  
-  Create custom bridge network
+Create network: Create custom bridge network
+docker network create --driver bridge --subnet 172.20.0.0/16 `<network_name>`
 
-- List networks  
-  `docker network ls`  
-  List all networks
+List networks: List all networks
+docker network ls
 
-- Inspect network  
-  `docker network inspect <network_name>`  
-  Show network details
+Inspect network: Show full network details
+docker network inspect `<network_name>`
 
-- Connect container  
-  `docker network connect <network_name> <container_name>`  
-  Connect container to network
+Connect container: Connect container to network
+docker network connect `<network_name>` `<container_name>`
 
-- Disconnect container  
-  `docker network disconnect <network_name> <container_name>`  
-  Disconnect container from network
+Disconnect container: Remove container from network
+docker network disconnect --force `<network_name>` `<container_name>`
 
-- Remove network  
-  `docker network rm <network_name>`  
-  Remove network
+Remove network: Remove a network
+docker network rm `<network_name>`
 
-- Prune networks  
-  `docker network prune --force`  
-  Remove unused networks
+Prune networks: Remove unused networks
+docker network prune --force
 
 ---
 
-# 🐝 Docker Swarm
+## 🐝 Docker Swarm
 
-- Initialize swarm  
-  `docker swarm init --advertise-addr <manager_ip>`  
-  Initialize swarm manager
+Init Swarm: Initialize swarm manager
+docker swarm init --advertise-addr `<manager_ip>`
 
-- Join worker node  
-  `docker swarm join --token <worker_token> <manager_ip>:2377`  
-  Add worker node
+Join as Worker: Add worker node to swarm
+docker swarm join --token `<worker_token>` `<manager_ip>:2377`
 
-- Join manager node  
-  `docker swarm join --token <manager_token> <manager_ip>:2377`  
-  Add manager node
+Join as Manager: Add manager node to swarm
+docker swarm join --token `<manager_token>` `<manager_ip>:2377`
 
-- Get worker token  
-  `docker swarm join-token worker`  
-  Display worker token
+Get join token: Show worker join token
+docker swarm join-token worker
 
-- Deploy stack  
-  `docker stack deploy --compose-file docker-compose.yml <stack_name>`  
-  Deploy application stack
+Deploy stack: Deploy application stack
+docker stack deploy --compose-file docker-compose.yml `<stack_name>`
 
-- List stacks  
-  `docker stack ls`  
-  List stacks
+List stacks: List all stacks
+docker stack ls
 
-- List stack services  
-  `docker stack services <stack_name>`  
-  Show services inside stack
+Stack services: Show services in stack
+docker stack services `<stack_name>`
 
-- Remove stack  
-  `docker stack rm <stack_name>`  
-  Remove stack
+Remove stack: Remove stack
+docker stack rm `<stack_name>`
 
-- List swarm nodes  
-  `docker node ls`  
-  Show swarm nodes
+List nodes: Show swarm nodes
+docker node ls
 
-- Drain node  
-  `docker node update --availability drain <node_id>`  
-  Drain workloads from node
+Drain node: Move workloads off node
+docker node update --availability drain `<node_id>`
 
 ---
 
-# ⚙️ Service Management
+## ⚙️ Service Management
 
-- Create service  
-  `docker service create --name <name> --replicas 3 <image>:<tag>`  
-  Create replicated service
+Create service: Create replicated service
+docker service create --name `<name>` --replicas 3 --publish 80:80 `<image>:<tag>`
 
-- List services  
-  `docker service ls`  
-  Show services
+List services: List all services
+docker service ls
 
-- Service logs  
-  `docker service logs --follow <service_name>`  
-  View service logs
+Service logs: View service logs
+docker service logs --follow `<service_name>`
 
-- Scale service  
-  `docker service scale <service_name>=5`  
-  Scale replicas
+Scale service: Scale number of replicas
+docker service scale `<service_name>`=5
 
-- Update service  
-  `docker service update --image <image>:<tag> <service_name>`  
-  Rolling update
+Update service: Rolling update service image
+docker service update --image `<image>:<tag>` `<service_name>`
 
-- Rollback service  
-  `docker service rollback <service_name>`  
-  Rollback previous deployment
+Rollback service: Rollback to previous version
+docker service rollback `<service_name>`
 
-- Inspect service  
-  `docker service inspect --pretty <service_name>`  
-  Service details
+Inspect service: Show service details
+docker service inspect --pretty `<service_name>`
 
-- Remove service  
-  `docker service rm <service_name>`  
-  Remove service
+Remove service: Delete service
+docker service rm `<service_name>`
 
 ---
 
-# 🔐 Secrets & Configs
+## 🔐 Secrets & Configs
 
-- Create secret  
-  `echo "mypassword" | docker secret create db_password -`  
-  Create Docker secret
+Create secret: Create secret from stdin
+echo "value" | docker secret create `<secret_name>` -
 
-- Create secret from file  
-  `docker secret create <secret_name> /path/secret.txt`  
-  Create secret using file
+Create from file: Create secret from file
+docker secret create `<secret_name>` /path/to/file
 
-- List secrets  
-  `docker secret ls`  
-  Show secrets
+List secrets: List all secrets
+docker secret ls
 
-- Inspect secret  
-  `docker secret inspect <secret_name>`  
-  Secret details
+Inspect secret: Show secret details
+docker secret inspect `<secret_name>`
 
-- Remove secret  
-  `docker secret rm <secret_name>`  
-  Remove secret
+Remove secret: Delete secret
+docker secret rm `<secret_name>`
 
-- Create config  
-  `docker config create <config_name> config.yml`  
-  Create config
+Create config: Create swarm config
+docker config create `<config_name>` /path/to/config.yml
 
-- List configs  
-  `docker config ls`  
-  List configs
+List configs: List configs
+docker config ls
 
 ---
 
-# 📊 System & Maintenance
+## 📊 System & Maintenance
 
-- System info  
-  `docker system info`  
-  Show Docker system information
+System info: Show Docker system details
+docker system info
 
-- Disk usage  
-  `docker system df --verbose`  
-  Detailed storage usage
+Disk usage: Show Docker disk usage
+docker system df --verbose
 
-- Full prune  
-  `docker system prune --all --force --volumes`  
-  Remove unused Docker resources
+Full prune: Remove all unused resources (⚠️ dangerous)
+docker system prune --all --force --volumes --filter "until=48h"
 
-- Docker events  
-  `docker system events`  
-  View live Docker events
+Events: Show Docker events
+docker system events --since 1h
 
-- Login to registry  
-  `docker login <registry_url>`  
-  Authenticate to registry
+Login registry: Login to registry
+docker login `<registry_url>`
 
-- Logout from registry  
-  `docker logout <registry_url>`  
-  Logout from registry
+Logout registry: Logout from registry
+docker logout `<registry_url>`
+
+---
+
+If you want next upgrade, I can convert this into:
+
+* 📘 GitHub README.md (perfect formatting)
+* 📄 PDF cheat sheet
+* 🧠 interview revision sheet (1-page summary)
+* ⚡ Linux + Docker combo command sheet
+
 
 ---
 
