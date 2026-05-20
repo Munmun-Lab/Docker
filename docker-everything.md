@@ -5,53 +5,20 @@
 
 # 📦 Container Management
 
-- Run container  
-  `docker container run --name <name> --detach --restart always --publish <host>:<container> <image>:<tag>`  
-  Run container in background with auto-restart
-
-- Stop container  
-  `docker container stop <container_id_or_name>`  
-  Gracefully stop a running container
-
-- Start container  
-  `docker container start <container_id_or_name>`  
-  Start a stopped container
-
-- Restart container  
-  `docker container restart --time 10 <container_id_or_name>`  
-  Restart container with grace period
-
-- Remove container  
-  `docker container rm --force --volumes <container_id_or_name>`  
-  Remove container with volumes
-
-- List containers  
-  `docker container ls --all`  
-  List all containers
-
-- Inspect container  
-  `docker container inspect <container_id_or_name>`  
-  Show detailed container information
-
-- Container logs  
-  `docker container logs --follow --timestamps --tail 100 <container_id_or_name>`  
-  View live logs
-
-- Exec into container  
-  `docker container exec --interactive --tty <container_id_or_name> /bin/bash`  
-  Open shell inside container
-
-- Container stats  
-  `docker container stats --no-stream`  
-  View resource usage
-
-- Copy file  
-  `docker container cp <container>:/path/file /host/path`  
-  Copy files between host and container
-
-- Prune stopped containers  
-  `docker container prune --force`  
-  Remove stopped containers
+| Command Purpose          | Full Command                                                                                              | Description                                        |
+| ------------------------ | --------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| Run container            | `docker container run --name <name> --detach --restart always --publish <host>:<container> <image>:<tag>` | Run container in background with auto-restart      |
+| Stop container           | `docker container stop <container_id_or_name>`                                                            | Gracefully stop a running container                |
+| Start container          | `docker container start <container_id_or_name>`                                                           | Start a stopped container                          |
+| Restart container        | `docker container restart --time 10 <container_id_or_name>`                                               | Restart with 10-second grace period                |
+| Remove container         | `docker container rm --force --volumes <container_id_or_name>`                                            | Force remove container along with attached volumes |
+| List containers          | `docker container ls --all --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"`                 | List all containers in table format                |
+| Inspect container        | `docker container inspect --format '{{json .}}' <container_id_or_name>`                                   | Full JSON inspection of container                  |
+| Container logs           | `docker container logs --follow --timestamps --tail 100 <container_id_or_name>`                           | View live logs with timestamps                     |
+| Exec into container      | `docker container exec --interactive --tty <container_id_or_name> /bin/bash`                              | Open interactive shell inside container            |
+| Container stats          | `docker container stats --no-stream --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}"`              | Snapshot of CPU and memory usage                   |
+| Copy file                | `docker container cp <container>:/path/to/file /host/path/`                                               | Copy file from container to host                   |
+| Prune stopped containers | `docker container prune --force --filter "until=24h"`                                                     | Remove containers stopped for more than 24 hours   |
 
 ---
 
