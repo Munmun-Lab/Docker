@@ -329,6 +329,10 @@ EXPOSE 80
 CMD ["nginx","-g","daemon off;"]
 ```
 
+```ENTRYPOINT ["executable"]
+CMD ["default_argument"]
+```
+
 ---
 
 # 🚀 Quick Remember Commands
