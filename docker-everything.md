@@ -1,428 +1,325 @@
-````markdown id="jlwm4m"
+```markdown
 # 🐳 Docker Commands — Full Production Reference
 
 ---
 
 # 📦 Container Management
 
-Docker container commands are used to create, manage, monitor, and remove containers.
-
 - Run container  
-  ```bash
-  docker container run --name <name> --detach --restart always --publish <host>:<container> <image>:<tag>
-  ```
+  `docker container run --name <name> --detach --restart always --publish <host>:<container> <image>:<tag>`  
+  Run container in background with auto-restart
 
 - Stop container  
-  ```bash
-  docker container stop <container_id_or_name>
-  ```
+  `docker container stop <container_id_or_name>`  
+  Gracefully stop a running container
 
 - Start container  
-  ```bash
-  docker container start <container_id_or_name>
-  ```
+  `docker container start <container_id_or_name>`  
+  Start a stopped container
 
 - Restart container  
-  ```bash
-  docker container restart --time 10 <container_id_or_name>
-  ```
+  `docker container restart --time 10 <container_id_or_name>`  
+  Restart container with grace period
 
 - Remove container  
-  ```bash
-  docker container rm --force --volumes <container_id_or_name>
-  ```
+  `docker container rm --force --volumes <container_id_or_name>`  
+  Remove container with volumes
 
 - List containers  
-  ```bash
-  docker container ls --all
-  ```
+  `docker container ls --all`  
+  List all containers
 
 - Inspect container  
-  ```bash
-  docker container inspect <container_id_or_name>
-  ```
+  `docker container inspect <container_id_or_name>`  
+  Show detailed container information
 
 - Container logs  
-  ```bash
-  docker container logs --follow --timestamps --tail 100 <container_id_or_name>
-  ```
+  `docker container logs --follow --timestamps --tail 100 <container_id_or_name>`  
+  View live logs
 
 - Exec into container  
-  ```bash
-  docker container exec --interactive --tty <container_id_or_name> /bin/bash
-  ```
+  `docker container exec --interactive --tty <container_id_or_name> /bin/bash`  
+  Open shell inside container
 
 - Container stats  
-  ```bash
-  docker container stats --no-stream
-  ```
+  `docker container stats --no-stream`  
+  View resource usage
 
 - Copy file  
-  ```bash
-  docker container cp <container>:/path/to/file /host/path/
-  ```
+  `docker container cp <container>:/path/file /host/path`  
+  Copy files between host and container
 
 - Prune stopped containers  
-  ```bash
-  docker container prune --force
-  ```
+  `docker container prune --force`  
+  Remove stopped containers
 
 ---
 
 # 🖼️ Image Management
 
-Docker image commands are used to build, download, upload, and manage images.
-
 - Pull image  
-  ```bash
-  docker image pull <registry>/<image>:<tag>
-  ```
+  `docker image pull <registry>/<image>:<tag>`  
+  Download image from registry
 
 - Build image  
-  ```bash
-  docker image build --file Dockerfile --tag <name>:<tag> .
-  ```
+  `docker image build --file Dockerfile --tag <name>:<tag> .`  
+  Build image from Dockerfile
 
 - Tag image  
-  ```bash
-  docker image tag <source_image>:<tag> <registry>/<image>:<tag>
-  ```
+  `docker image tag <source_image>:<tag> <target_image>:<tag>`  
+  Create new image tag
 
 - Push image  
-  ```bash
-  docker image push <registry>/<image>:<tag>
-  ```
+  `docker image push <registry>/<image>:<tag>`  
+  Push image to registry
 
 - List images  
-  ```bash
-  docker image ls --all
-  ```
+  `docker image ls --all`  
+  List all images
 
 - Remove image  
-  ```bash
-  docker image rm --force <image_id_or_name>:<tag>
-  ```
+  `docker image rm --force <image>:<tag>`  
+  Remove image
 
 - Inspect image  
-  ```bash
-  docker image inspect <image>:<tag>
-  ```
+  `docker image inspect <image>:<tag>`  
+  Show image details
 
 - Image history  
-  ```bash
-  docker image history --no-trunc <image>:<tag>
-  ```
+  `docker image history --no-trunc <image>:<tag>`  
+  Show image layers
 
 - Prune images  
-  ```bash
-  docker image prune --all --force
-  ```
+  `docker image prune --all --force`  
+  Remove unused images
 
 - Save image  
-  ```bash
-  docker image save --output /backup/<image>.tar <image>:<tag>
-  ```
+  `docker image save --output backup.tar <image>:<tag>`  
+  Save image as tar file
 
 - Load image  
-  ```bash
-  docker image load --input /backup/<image>.tar
-  ```
+  `docker image load --input backup.tar`  
+  Load image from tar file
 
 ---
 
 # 🔊 Volume Management
 
-Docker volumes provide persistent storage for containers.
-
 - Create volume  
-  ```bash
-  docker volume create --name <volume_name>
-  ```
+  `docker volume create --name <volume_name>`  
+  Create named volume
 
 - List volumes  
-  ```bash
-  docker volume ls
-  ```
+  `docker volume ls`  
+  List all volumes
 
 - Inspect volume  
-  ```bash
-  docker volume inspect <volume_name>
-  ```
+  `docker volume inspect <volume_name>`  
+  Show volume details
 
 - Remove volume  
-  ```bash
-  docker volume rm <volume_name>
-  ```
+  `docker volume rm <volume_name>`  
+  Remove volume
 
 - Prune volumes  
-  ```bash
-  docker volume prune --force
-  ```
+  `docker volume prune --force`  
+  Remove unused volumes
 
 ---
 
 # 🌐 Network Management
 
-Docker networks allow containers to communicate securely.
-
 - Create network  
-  ```bash
-  docker network create --driver bridge <network_name>
-  ```
+  `docker network create --driver bridge <network_name>`  
+  Create custom bridge network
 
 - List networks  
-  ```bash
-  docker network ls
-  ```
+  `docker network ls`  
+  List all networks
 
 - Inspect network  
-  ```bash
-  docker network inspect <network_name>
-  ```
+  `docker network inspect <network_name>`  
+  Show network details
 
 - Connect container  
-  ```bash
-  docker network connect <network_name> <container_name>
-  ```
+  `docker network connect <network_name> <container_name>`  
+  Connect container to network
 
 - Disconnect container  
-  ```bash
-  docker network disconnect <network_name> <container_name>
-  ```
+  `docker network disconnect <network_name> <container_name>`  
+  Disconnect container from network
 
 - Remove network  
-  ```bash
-  docker network rm <network_name>
-  ```
+  `docker network rm <network_name>`  
+  Remove network
 
 - Prune networks  
-  ```bash
-  docker network prune --force
-  ```
+  `docker network prune --force`  
+  Remove unused networks
 
 ---
 
 # 🐝 Docker Swarm
 
-Docker Swarm is Docker’s native orchestration platform.
+- Initialize swarm  
+  `docker swarm init --advertise-addr <manager_ip>`  
+  Initialize swarm manager
 
-- Initialize Swarm  
-  ```bash
-  docker swarm init --advertise-addr <manager_ip>
-  ```
+- Join worker node  
+  `docker swarm join --token <worker_token> <manager_ip>:2377`  
+  Add worker node
 
-- Join as worker  
-  ```bash
-  docker swarm join --token <worker_token> <manager_ip>:2377
-  ```
-
-- Join as manager  
-  ```bash
-  docker swarm join --token <manager_token> <manager_ip>:2377
-  ```
+- Join manager node  
+  `docker swarm join --token <manager_token> <manager_ip>:2377`  
+  Add manager node
 
 - Get worker token  
-  ```bash
-  docker swarm join-token worker
-  ```
+  `docker swarm join-token worker`  
+  Display worker token
 
 - Deploy stack  
-  ```bash
-  docker stack deploy --compose-file docker-compose.yml <stack_name>
-  ```
+  `docker stack deploy --compose-file docker-compose.yml <stack_name>`  
+  Deploy application stack
 
 - List stacks  
-  ```bash
-  docker stack ls
-  ```
+  `docker stack ls`  
+  List stacks
 
-- Stack services  
-  ```bash
-  docker stack services <stack_name>
-  ```
+- List stack services  
+  `docker stack services <stack_name>`  
+  Show services inside stack
 
 - Remove stack  
-  ```bash
-  docker stack rm <stack_name>
-  ```
+  `docker stack rm <stack_name>`  
+  Remove stack
 
-- List nodes  
-  ```bash
-  docker node ls
-  ```
+- List swarm nodes  
+  `docker node ls`  
+  Show swarm nodes
 
 - Drain node  
-  ```bash
-  docker node update --availability drain <node_id>
-  ```
+  `docker node update --availability drain <node_id>`  
+  Drain workloads from node
 
 ---
 
 # ⚙️ Service Management
 
-Docker services manage workloads inside Swarm.
-
 - Create service  
-  ```bash
-  docker service create --name <name> --replicas 3 <image>:<tag>
-  ```
+  `docker service create --name <name> --replicas 3 <image>:<tag>`  
+  Create replicated service
 
 - List services  
-  ```bash
-  docker service ls
-  ```
+  `docker service ls`  
+  Show services
 
 - Service logs  
-  ```bash
-  docker service logs --follow <service_name>
-  ```
+  `docker service logs --follow <service_name>`  
+  View service logs
 
 - Scale service  
-  ```bash
-  docker service scale <service_name>=5
-  ```
+  `docker service scale <service_name>=5`  
+  Scale replicas
 
 - Update service  
-  ```bash
-  docker service update --image <image>:<new_tag> <service_name>
-  ```
+  `docker service update --image <image>:<tag> <service_name>`  
+  Rolling update
 
 - Rollback service  
-  ```bash
-  docker service rollback <service_name>
-  ```
+  `docker service rollback <service_name>`  
+  Rollback previous deployment
 
 - Inspect service  
-  ```bash
-  docker service inspect --pretty <service_name>
-  ```
+  `docker service inspect --pretty <service_name>`  
+  Service details
 
 - Remove service  
-  ```bash
-  docker service rm <service_name>
-  ```
+  `docker service rm <service_name>`  
+  Remove service
 
 ---
 
 # 🔐 Secrets & Configs
 
-Docker secrets securely manage sensitive data.
-
 - Create secret  
-  ```bash
-  echo "mysecretvalue" | docker secret create <secret_name> -
-  ```
+  `echo "mypassword" | docker secret create db_password -`  
+  Create Docker secret
 
 - Create secret from file  
-  ```bash
-  docker secret create <secret_name> /path/to/secret.txt
-  ```
+  `docker secret create <secret_name> /path/secret.txt`  
+  Create secret using file
 
 - List secrets  
-  ```bash
-  docker secret ls
-  ```
+  `docker secret ls`  
+  Show secrets
 
 - Inspect secret  
-  ```bash
-  docker secret inspect <secret_name>
-  ```
+  `docker secret inspect <secret_name>`  
+  Secret details
 
 - Remove secret  
-  ```bash
-  docker secret rm <secret_name>
-  ```
+  `docker secret rm <secret_name>`  
+  Remove secret
 
 - Create config  
-  ```bash
-  docker config create <config_name> /path/to/config.yml
-  ```
+  `docker config create <config_name> config.yml`  
+  Create config
 
 - List configs  
-  ```bash
-  docker config ls
-  ```
+  `docker config ls`  
+  List configs
 
 ---
 
 # 📊 System & Maintenance
 
-Docker system commands help monitor and clean resources.
-
 - System info  
-  ```bash
-  docker system info
-  ```
+  `docker system info`  
+  Show Docker system information
 
 - Disk usage  
-  ```bash
-  docker system df --verbose
-  ```
+  `docker system df --verbose`  
+  Detailed storage usage
 
 - Full prune  
-  ```bash
-  docker system prune --all --force --volumes
-  ```
+  `docker system prune --all --force --volumes`  
+  Remove unused Docker resources
 
-- Events  
-  ```bash
-  docker system events
-  ```
+- Docker events  
+  `docker system events`  
+  View live Docker events
 
 - Login to registry  
-  ```bash
-  docker login <registry_url>
-  ```
+  `docker login <registry_url>`  
+  Authenticate to registry
 
 - Logout from registry  
-  ```bash
-  docker logout <registry_url>
-  ```
+  `docker logout <registry_url>`  
+  Logout from registry
 
 ---
 
 # ⚠️ Production Best Practices
 
 - Always use fixed image tags instead of `latest`
-- Use restart policies like:
-  ```bash
-  --restart always
-  ```
-
-- Use named volumes for persistent storage
+- Use restart policies like `--restart always`
+- Prefer named volumes over bind mounts
 - Use Docker secrets for passwords
 - Run containers as non-root users
-- Apply CPU and memory limits:
-  ```bash
-  --memory 512m --cpus 1.5
-  ```
-
+- Apply CPU and memory limits
+- Use health checks
 - Monitor logs regularly
 - Scan images for vulnerabilities
-- Use health checks for applications
 
 ---
 
 # 🧠 Simple Docker Workflow
 
-1. Write Dockerfile
-2. Build Docker Image
-3. Push Image to Registry
-4. Pull Image
-5. Run Container
-6. Monitor and Scale
+1. Write Dockerfile  
+2. Build Docker image  
+3. Push image to registry  
+4. Pull image from registry  
+5. Run container  
+6. Monitor and scale application
 
----
-
-# 🏗️ Real-Life Docker Analogy
-
-- Dockerfile → Recipe
-- Image → Cake template
-- Container → Actual cake
-- Registry → App store
-- Volume → External hard disk
-- Network → Wi-Fi/router
-- Docker Daemon → Engine
-- Docker Client → Remote control
-
-````
+```
