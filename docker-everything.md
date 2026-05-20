@@ -5,21 +5,41 @@
 
 # 📦 Container Management
 
-| Command Purpose          | Full Command                                                                                              | Description                                        |
-| ------------------------ | --------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| Run container            | `docker container run --name <name> --detach --restart always --publish <host>:<container> <image>:<tag>` | Run container in background with auto-restart      |
-| Stop container           | `docker container stop <container_id_or_name>`                                                            | Gracefully stop a running container                |
-| Start container          | `docker container start <container_id_or_name>`                                                           | Start a stopped container                          |
-| Restart container        | `docker container restart --time 10 <container_id_or_name>`                                               | Restart with 10-second grace period                |
-| Remove container         | `docker container rm --force --volumes <container_id_or_name>`                                            | Force remove container along with attached volumes |
-| List containers          | `docker container ls --all --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"`                 | List all containers in table format                |
-| Inspect container        | `docker container inspect --format '{{json .}}' <container_id_or_name>`                                   | Full JSON inspection of container                  |
-| Container logs           | `docker container logs --follow --timestamps --tail 100 <container_id_or_name>`                           | View live logs with timestamps                     |
-| Exec into container      | `docker container exec --interactive --tty <container_id_or_name> /bin/bash`                              | Open interactive shell inside container            |
-| Container stats          | `docker container stats --no-stream --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}"`              | Snapshot of CPU and memory usage                   |
-| Copy file                | `docker container cp <container>:/path/to/file /host/path/`                                               | Copy file from container to host                   |
-| Prune stopped containers | `docker container prune --force --filter "until=24h"`                                                     | Remove containers stopped for more than 24 hours   |
+* Run container: Run container in background with auto-restart
+  `docker container run --name <name> --detach --restart always --publish <host>:<container> <image>:<tag>`
 
+* Stop container: Gracefully stop a running container
+  `docker container stop <container_id_or_name>`
+
+* Start container: Start a stopped container
+  `docker container start <container_id_or_name>`
+
+* Restart container: Restart container with 10-second grace period
+  `docker container restart --time 10 <container_id_or_name>`
+
+* Remove container: Force remove container along with volumes
+  `docker container rm --force --volumes <container_id_or_name>`
+
+* List containers: List all containers (running + stopped)
+  `docker container ls --all`
+
+* Inspect container: Show full container details in JSON format
+  `docker container inspect <container_id_or_name>`
+
+* Logs: View live logs with timestamps
+  `docker container logs --follow --timestamps --tail 100 <container_id_or_name>`
+
+* Exec: Open interactive shell inside container
+  `docker container exec --interactive --tty <container_id_or_name> /bin/bash`
+
+* Stats: Show CPU and memory usage snapshot
+  `docker container stats --no-stream`
+
+* Copy file: Copy file from container to host machine
+  `docker container cp <container>:/path/to/file /host/path/`
+
+* Prune: Remove stopped containers older than 24 hours
+  `docker container prune --force --filter "until=24h"`
 
 ---
 
