@@ -1,246 +1,243 @@
-# Docker `-d`, `-it`, and `docker exec` — Quick Reference
+# Docker `-d`, `-it`, and `docker exec -it`
 
-| Command / Flag    | Meaning                              | Purpose                                 | Example                      | What Happens                                             |
-| ----------------- | ------------------------------------ | --------------------------------------- | ---------------------------- | -------------------------------------------------------- |
-| `-d`              | Detached Mode                        | Run container in background             | `docker run -d nginx`        | Container starts in background and terminal becomes free |
-| `-i`              | Interactive Mode                     | Keep STDIN open                         | `docker run -i ubuntu`       | Allows input to container                                |
-| `-t`              | TTY Terminal                         | Allocate terminal session               | `docker run -t ubuntu`       | Gives terminal-like shell                                |
-| `-it`             | Interactive + TTY                    | Open interactive shell inside container | `docker run -it ubuntu bash` | You enter container shell                                |
-| `docker exec`     | Execute command in running container | Run commands inside existing container  | `docker exec app ls`         | Runs `ls` inside running container                       |
-| `docker exec -it` | Interactive exec session             | Access shell of running container       | `docker exec -it app bash`   | Opens terminal inside running container                  |
+| Command           | Meaning                                            | Purpose                            | Example                                | What Happens                            | Sample Output         |
+| ----------------- | -------------------------------------------------- | ---------------------------------- | -------------------------------------- | --------------------------------------- | --------------------- |
+| `docker run -d`   | Detached Mode                                      | Run container in background        | `bash docker run -d nginx `            | Container starts silently in background | `bash a1b2c3d4e5f6 `  |
+| `docker run -it`  | Interactive + TTY                                  | Open terminal inside new container | `bash docker run -it ubuntu bash `     | Opens Ubuntu shell                      | `bash root@c8d12:/# ` |
+| `docker exec -it` | Execute command interactively in running container | Access existing/running container  | `bash docker exec -it webserver bash ` | Opens shell inside running container    | `bash root@a1b2:/# `  |
+
+---
+
+# Detailed Comparison Table
+
+| Feature                            | `docker run -d` | `docker run -it` | `docker exec -it` |
+| ---------------------------------- | --------------- | ---------------- | ----------------- |
+| Creates new container              | Yes             | Yes              | No                |
+| Runs in background                 | Yes             | No               | No                |
+| Interactive shell                  | No              | Yes              | Yes               |
+| Used for applications/services     | Yes             | Sometimes        | No                |
+| Used for troubleshooting           | Rarely          | Yes              | Very Common       |
+| Needs existing container           | No              | No               | Yes               |
+| Common in Production               | Very High       | Medium           | Very High         |
+| Container keeps running after exit | Yes             | Usually No       | Yes               |
 
 ---
 
 # 1. `docker run -d`
 
-## Syntax
+## Definition
 
-```bash id="9yhk9q"
-docker run -d <image>
-```
+`-d` = Detached Mode
 
-## Example
+Runs container in background and returns container ID.
 
-```bash id="g39udj"
+---
+
+## Command
+
+```bash id="x7a3kq"
 docker run -d nginx
 ```
 
-## Usage
-
-* Web servers
-* APIs
-* Databases
-* Background services
-* Production containers
+---
 
 ## Output
 
-```bash id="wpcxt5"
-a1b2c3d4e5f6...
+```bash id="2i5vyo"
+8f3d7c2a1e45f9...
 ```
 
 (Container ID)
 
-## Flow
+---
 
-```text id="a3wfrw"
-Start Container
-      │
-      ▼
-Run in Background
-      │
-      ▼
-Return Container ID
+## Verify
+
+```bash id="w7hbf6"
+docker ps
 ```
+
+### Output
+
+```bash id="w19lx5"
+CONTAINER ID   IMAGE   STATUS
+8f3d7c2a1e45   nginx   Up 2 minutes
+```
+
+---
+
+## Real Usage
+
+| Scenario    | Example |
+| ----------- | ------- |
+| Web server  | Nginx   |
+| API service | Node.js |
+| Database    | MySQL   |
+| Monitoring  | Grafana |
+| CI/CD       | Jenkins |
 
 ---
 
 # 2. `docker run -it`
 
-## Syntax
+## Definition
 
-```bash id="pw7jlwm"
-docker run -it <image> <shell>
-```
+| Flag | Meaning        |
+| ---- | -------------- |
+| `-i` | Interactive    |
+| `-t` | Terminal (TTY) |
 
-## Example
+Used to open terminal access INSIDE container.
 
-```bash id="y89e9g"
+---
+
+## Command
+
+```bash id="zfczy7"
 docker run -it ubuntu bash
 ```
 
-## Usage
-
-* Troubleshooting
-* Learning Linux
-* Manual testing
-* Debugging
+---
 
 ## Output
 
-```bash id="11kpjc"
-root@container:/#
+```bash id="rxs7z0"
+root@4f6a12:/#
 ```
 
-(Container shell access)
+Now you are INSIDE container.
 
-## Flow
+---
 
-```text id="icg34w"
-Start Container
-      │
-      ▼
-Attach Terminal
-      │
-      ▼
-Interactive Shell Access
+## Example Commands Inside Container
+
+```bash id="v0oz3r"
+ls
+pwd
+cat /etc/os-release
+```
+
+### Example Output
+
+```bash id="hfd19m"
+/bin
+/etc
+/usr
 ```
 
 ---
 
-# 3. `docker exec`
+# 3. `docker exec -it`
 
-## Syntax
+## Definition
 
-```bash id="hhlsya"
-docker exec <container> <command>
+Used to enter an ALREADY RUNNING container interactively.
+
+---
+
+## Step 1 — Run Container
+
+```bash id="n58x5n"
+docker run -d --name web nginx
 ```
 
-## Example
+---
 
-```bash id="2zbn3g"
-docker exec webserver ls
+## Step 2 — Enter Container
+
+```bash id="2v5n64"
+docker exec -it web bash
 ```
 
-## Usage
-
-* Run one-time commands
-* Check files/processes
-* Script automation
+---
 
 ## Output
 
-```bash id="a6g7ur"
-bin
-etc
-home
-usr
-```
-
-## Flow
-
-```text id="ut4gmu"
-Existing Running Container
-           │
-           ▼
-Execute Command Inside
-           │
-           ▼
-Return Output
+```bash id="jzcfk7"
+root@a7c91:/#
 ```
 
 ---
 
-# 4. `docker exec -it`
+## If Bash Not Available
 
-## Syntax
+Use `sh`
 
-```bash id="v2it06"
-docker exec -it <container> bash
-```
-
-## Example
-
-```bash id="0tmif5"
-docker exec -it nginx-server bash
-```
-
-## Usage
-
-* Production troubleshooting
-* Kubernetes debugging
-* Checking logs/configs
-* DevOps operations
-
-## Output
-
-```bash id="i1gxot"
-root@container:/#
-```
-
-## Flow
-
-```text id="5jgh5f"
-Running Container
-       │
-       ▼
-Attach Interactive Terminal
-       │
-       ▼
-Shell Access Inside Container
+```bash id="i8k1cs"
+docker exec -it web sh
 ```
 
 ---
 
-# Key Difference
+# Visual Flow
 
-| Feature                  | `docker run` | `docker exec` |
-| ------------------------ | ------------ | ------------- |
-| Creates new container    | Yes          | No            |
-| Uses existing container  | No           | Yes           |
-| Starts application       | Yes          | No            |
-| Used for troubleshooting | Sometimes    | Very Common   |
-| Opens shell              | With `-it`   | With `-it`    |
+| Command                      | Flow                                 |
+| ---------------------------- | ------------------------------------ |
+| `docker run -d nginx`        | Create → Start → Background          |
+| `docker run -it ubuntu bash` | Create → Start → Attach Terminal     |
+| `docker exec -it web bash`   | Existing Container → Attach Terminal |
 
 ---
 
-# Real Enterprise Scenario
+# Real Enterprise Usage
 
-## Start Application
+| Team                 | Common Command                       |
+| -------------------- | ------------------------------------ |
+| DevOps               | `docker exec -it`                    |
+| SRE                  | `docker exec -it`                    |
+| Developers           | `docker run -it`                     |
+| Platform Engineers   | `docker run -d`                      |
+| Kubernetes Engineers | `kubectl exec -it` (similar concept) |
 
-```bash id="63r4eg"
-docker run -d --name nginx-web nginx
+---
+
+# Most Common Production Workflow
+
+## Run App
+
+```bash id="lr3pvl"
+docker run -d --name app nginx
 ```
 
-## Verify Running Container
+---
 
-```bash id="umglh9"
+## Check Running Containers
+
+```bash id="bn2h1j"
 docker ps
 ```
 
-## Access Running Container
+---
 
-```bash id="3z7vkp"
-docker exec -it nginx-web bash
-```
+## Enter Container
 
-## Check Files
-
-```bash id="jmxz7r"
-ls /etc/nginx
+```bash id="0pmt57"
+docker exec -it app bash
 ```
 
 ---
 
-# Most Common DevOps Commands
+## Check Logs
 
-| Purpose                      | Command                      |
-| ---------------------------- | ---------------------------- |
-| Run app in background        | `docker run -d nginx`        |
-| Open Ubuntu shell            | `docker run -it ubuntu bash` |
-| Access running container     | `docker exec -it app bash`   |
-| Run command inside container | `docker exec app ls`         |
-| View running containers      | `docker ps`                  |
-| View logs                    | `docker logs app`            |
-| Stop container               | `docker stop app`            |
+```bash id="mjlwm6"
+docker logs app
+```
 
 ---
 
-# Interview Summary
+## Stop Container
 
-| Command           | One-Line Explanation                                |
-| ----------------- | --------------------------------------------------- |
-| `-d`              | Runs container in detached/background mode          |
-| `-it`             | Opens interactive terminal session inside container |
-| `docker exec`     | Executes command inside running container           |
-| `docker exec -it` | Opens shell access to existing running container    |
+```bash id="g1v70u"
+docker stop app
+```
+
+---
+
+# Quick Interview Answers
+
+| Topic             | Answer                                                    |
+| ----------------- | --------------------------------------------------------- |
+| `-d`              | Runs container in detached/background mode                |
+| `-it`             | Opens interactive terminal session                        |
+| `docker exec -it` | Opens shell inside running container                      |
+| Difference        | `run` creates container, `exec` enters existing container |
