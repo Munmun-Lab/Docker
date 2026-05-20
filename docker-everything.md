@@ -20,6 +20,7 @@
 | Copy file                | `docker container cp <container>:/path/to/file /host/path/`                                               | Copy file from container to host                   |
 | Prune stopped containers | `docker container prune --force --filter "until=24h"`                                                     | Remove containers stopped for more than 24 hours   |
 
+
 ---
 
 # 🖼️ Image Management
