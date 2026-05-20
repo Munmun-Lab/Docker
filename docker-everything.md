@@ -233,16 +233,6 @@ docker logout `<registry_url>`
 
 ---
 
-If you want next upgrade, I can convert this into:
-
-* 📘 GitHub README.md (perfect formatting)
-* 📄 PDF cheat sheet
-* 🧠 interview revision sheet (1-page summary)
-* ⚡ Linux + Docker combo command sheet
-
-
----
-
 # ⚠️ Production Best Practices
 
 - Always use fixed image tags instead of `latest`
