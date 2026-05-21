@@ -513,6 +513,8 @@ build: .
 docker compose up --scale app=3
 ```
 
+👉 Runs 3 instances of app container
+
 ## 3. Profiles (selective services)
 
 ```yaml
@@ -544,4 +546,24 @@ docker-compose-guide/
 ├── diagrams/
 │   └── architecture.png
 ```
+---
+
+## 🧠 Real-World Use Cases
+
+* Microservices architecture
+* Full-stack apps (React + Node + DB)
+* CI/CD testing environments
+* Local Kubernetes alternative (lightweight)
+* Dev environment replication
+
+---
+
+## 📌 Summary
+
+Docker Compose helps you:
+
+* Define full application stack in YAML
+* Run multi-container apps easily
+* Automate networking + storage
+* Improve portability and DevOps workflow
 
