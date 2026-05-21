@@ -517,31 +517,6 @@ Kubernetes Pulls Image
 - Push Image: docker push username/mynginx:v1
 - Pull Private Image: docker pull username/mynginx:v1
 ```
-
----
-
-# Tag Image
-
-```bash id="sl7w9i"
-docker tag mynginx:v1 username/mynginx:v1
-```
-
----
-
-# Push Image
-
-```bash id="pfe8u6"
-docker push username/mynginx:v1
-```
-
----
-
-# Pull Private Image
-
-```bash id="81xjcr"
-docker pull username/mynginx:v1
-```
-
 ---
 
 # Important Docker Commands
