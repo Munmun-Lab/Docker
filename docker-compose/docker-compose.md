@@ -1,9 +1,3 @@
-Docker Compose is one of the most practical tools in container-based development because it lets you run **multi-container applications using a single YAML file**.
-
-Below is a complete, Git-ready documentation style guide for understanding, using, installing, and designing with Docker Compose.
-
----
-
 # 🐳 Docker Compose – Complete Guide
 
 ## 📌 What is Docker Compose?
