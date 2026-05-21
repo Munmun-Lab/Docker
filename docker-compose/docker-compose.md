@@ -74,6 +74,24 @@ With Compose:
             Shared Communication
 ```
 
+### 🔄 Execution Flow
+
+```text
+docker compose up
+        │
+        ▼
+Reads docker-compose.yml
+        │
+        ▼
+Creates Network
+        │
+        ├── Builds / pulls images
+        │
+        ├── Starts containers
+        │
+        └── Connects services via DNS
+```
+
 ---
 
 # 📄 Basic docker-compose.yml Example
@@ -283,22 +301,6 @@ services:
     image: redis:alpine
 ```
 
----
-
-# 📌 Docker Compose vs Docker CLI
-
-| Feature         | Docker CLI       | Docker Compose         |
-| --------------- | ---------------- | ---------------------- |
-| Multi-container | Hard             | Easy                   |
-| Configuration   | Commands         | YAML file              |
-| Networking      | Manual           | Auto                   |
-| Reusability     | Low              | High                   |
-| Best use        | Single container | Full application stack |
-
----
-
-# 🧭 Design Pattern (Best Practice)
-
 ## Recommended structure
 
 ```
@@ -314,13 +316,192 @@ project/
 
 ---
 
+## 🧱 Real Example: Web App + DB
+
+### 📄 docker-compose.yml
+
+```yaml
+version: "3.9"
+
+services:
+
+  web:
+    image: nginx:latest
+    container_name: web_server
+    ports:
+      - "8080:80"
+    depends_on:
+      - app
+
+  app:
+    image: node:18
+    container_name: node_app
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: node index.js
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: appdb
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
+```
+
+---
+
+## 🧭 Architecture Diagram
+
+```text
+            ┌──────────────┐
+            │   Browser    │
+            └──────┬───────┘
+                   │
+                   ▼
+            ┌──────────────┐
+            │  NGINX (web) │
+            └──────┬───────┘
+                   │
+        ┌──────────┴──────────┐
+        ▼                     ▼
+┌──────────────┐     ┌──────────────┐
+│ Node.js App  │────▶│ MySQL DB     │
+└──────────────┘     └──────────────┘
+```
+
+---
+
+## 🔌 Networking in Docker Compose
+
+* All services are on **same default network**
+* Each service can be accessed by name:
+
+```bash
+http://app:3000
+mysql -h db -u root -p
+```
+
+👉 No need for IP addresses
+
+---
+
+## 💾 Volumes (Data Persistence)
+
+### Example:
+
+```yaml
+volumes:
+  db_data:
+```
+
+* Stores DB data permanently
+* Even if container is removed, data remains
+
+---
+
+## 🔁 Important Commands
+
+| Command                        | Description                |
+| ------------------------------ | -------------------------- |
+| `docker compose up`            | Start all services         |
+| `docker compose up -d`         | Start in background        |
+| `docker compose down`          | Stop and remove containers |
+| `docker compose ps`            | List running services      |
+| `docker compose logs`          | View logs                  |
+| `docker compose build`         | Build images               |
+| `docker compose exec app bash` | Enter container            |
+
+---
+
+## 🧪 Environment Variables Example
+
+```yaml
+services:
+  app:
+    image: node:18
+    environment:
+      NODE_ENV: production
+      API_KEY: abc123
+```
+
+Or use `.env` file:
+
+```bash
+NODE_ENV=production
+API_KEY=abc123
+```
+
+---
+
+## 🔄 depends_on (Startup Order)
+
+```yaml
+services:
+  app:
+    depends_on:
+      - db
+```
+
+👉 Means:
+
+* DB starts first
+* App starts after DB
+
+⚠️ Note: It does NOT wait for DB to be “ready”, only started.
+
+---
+
+## 🧰 Build Custom Image
+
+```yaml
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+```
+
+---
+
+# 📌 Docker Compose vs Docker CLI
+
+| Feature         | Docker CLI       | Docker Compose         |
+| --------------- | ---------------- | ---------------------- |
+| Multi-container | Hard             | Easy                   |
+| Configuration   | Commands         | YAML file              |
+| Networking      | Manual           | Auto                   |
+| Reusability     | Low              | High                   |
+| Best use        | Single container | Full application stack |
+
+---
+
 ## 🔐 Best Practices
 
+* Use `.env` file
 * Use `.env` files for secrets
 * Avoid hardcoding passwords
+* Use named volumes
 * Use named volumes for DB persistence
 * Use service names for networking (not IPs)
+* Use version control for compose files
 * Keep compose file modular
+* Separate dev/prod compose files:
+
+```bash
+docker-compose.dev.yml
+docker-compose.prod.yml
+```
 
 ---
 
