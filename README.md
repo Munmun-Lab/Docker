@@ -157,7 +157,9 @@ The above picture, clearly indicates that Docker Deamon is brain of Docker. If D
 
 | Component        | Meaning                         |
 | ---------------- | ------------------------------- |
+| Docker Engine    | Main runtime                    |
 | Docker Client    | User interface (`docker`)       |
+| Docker CLI       | ommand line                     |
 | Docker Daemon    | Main Docker service (`dockerd`) |
 | Docker Image     | Read-only template              |
 | Docker Container | Running instance of image       |
@@ -409,6 +411,21 @@ CMD ["nginx","-g","daemon off;"]
 ```
 
 ---
+# Dockerfile Instructions
+
+| Instruction | Purpose               |
+| ----------- | --------------------- |
+| FROM        | Base image            |
+| RUN         | Execute commands      |
+| COPY        | Copy files            |
+| ADD         | Copy/extract          |
+| WORKDIR     | Set working directory |
+| ENV         | Environment variables |
+| EXPOSE      | Open ports            |
+| CMD         | Default command       |
+| ENTRYPOINT  | Main executable       |
+
+---
 
 # Image vs Container
 
@@ -445,6 +462,26 @@ CMD ["nginx","-g","daemon off;"]
 
 ---
 
+# Container Registries
+
+# What is Container Registry?
+
+Central repository storing container images.
+
+---
+
+# Registry Examples
+
+| Registry                | Provider         |
+| ----------------------- | ---------------- |
+| Docker DockerHub        | Public registry  |
+| Amazon Web Services ECR | AWS registry     |
+| Google GCR              | Google registry  |
+| GHCR                    | GitHub registry  |
+| Harbor                  | Private registry |
+
+---
+
 # Docker Registry
 
 A Docker Registry stores Docker Images.
@@ -457,6 +494,54 @@ Popular Registries:
 | [Quay.io](https://quay.io?utm_source=chatgpt.com)           | Public/Private |
 | AWS ECR                                                     | Private        |
 | Azure ACR                                                   | Private        |
+
+---
+
+# Registry Workflow
+
+```text id="mjlwm3"
+Developer
+    ↓
+Build Image
+    ↓
+Push to Registry
+    ↓
+Kubernetes Pulls Image
+```
+
+---
+
+- Docker Login: docker login
+- Tag Image: docker tag mynginx:v1 username/mynginx:v1
+- Push Image: docker push username/mynginx:v1
+- Pull Private Image: docker pull username/mynginx:v1
+```bash id="fz1du5"
+docker login
+```
+
+---
+
+# Tag Image
+
+```bash id="sl7w9i"
+docker tag mynginx:v1 username/mynginx:v1
+```
+
+---
+
+# Push Image
+
+```bash id="pfe8u6"
+docker push username/mynginx:v1
+```
+
+---
+
+# Pull Private Image
+
+```bash id="81xjcr"
+docker pull username/mynginx:v1
+```
 
 ---
 
