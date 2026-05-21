@@ -511,12 +511,11 @@ Kubernetes Pulls Image
 
 ---
 
+```bash id="sl7w9i"
 - Docker Login: docker login
 - Tag Image: docker tag mynginx:v1 username/mynginx:v1
 - Push Image: docker push username/mynginx:v1
 - Pull Private Image: docker pull username/mynginx:v1
-```bash id="fz1du5"
-docker login
 ```
 
 ---
